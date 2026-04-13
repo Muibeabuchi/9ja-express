@@ -6,7 +6,7 @@ const Footer = () => (
       <div className="mb-16 grid grid-cols-1 gap-10 sm:grid-cols-2 md:mb-24 md:gap-12 lg:grid-cols-4">
         <div className="space-y-4 md:space-y-6">
           <div className="font-headline text-2xl font-extrabold tracking-tighter text-on-surface">
-            EaseUp
+            9JA Express
           </div>
           <p className="text-sm leading-relaxed text-on-surface-variant md:text-base">
             The next evolution in regional transit. Precision-engineered travel
@@ -74,7 +74,7 @@ const Footer = () => (
             <input
               type="email"
               placeholder="Your email"
-              className="flex-grow rounded-md border-none bg-surface-container-highest px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+              className="grow rounded-md border-none bg-surface-container-highest px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
             />
             <button className="rounded-md bg-primary p-3 text-on-primary transition-opacity hover:opacity-90">
               <Send size={18} />
@@ -85,7 +85,7 @@ const Footer = () => (
 
       <div className="flex flex-col items-center justify-between gap-6 border-t border-surface-container pt-8 md:flex-row md:pt-12">
         <p className="text-center text-xs text-outline md:text-left md:text-sm">
-          © 2024 EaseUp Kinetic Transit. All rights reserved.
+          © 2026 9JA Express. All rights reserved.
         </p>
         <div className="flex gap-6 md:gap-8">
           <a

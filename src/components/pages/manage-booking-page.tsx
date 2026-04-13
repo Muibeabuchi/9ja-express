@@ -88,7 +88,7 @@ const ManageBookingPage = () => {
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-2 sm:grid-cols-2 lg:gap-4">
             <button className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-6 transition-colors hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98]">
               <Download size={24} className="text-primary" />
               <span className="text-sm font-bold">Download Receipt</span>
