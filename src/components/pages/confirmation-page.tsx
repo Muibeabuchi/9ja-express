@@ -2,14 +2,17 @@ import { Route } from "@/routes/confirmation"
 import { data as mockData } from "@/data/mockData"
 import { useNavigate } from "@tanstack/react-router"
 import { CheckCircle, Download, Bus, Home, Info } from "lucide-react"
+import { getBookingByRef } from "@/lib/bookingStorage"
+import { format } from "date-fns"
 
 const ConfirmationPage = () => {
   const params = Route.useSearch()
   const navigate = useNavigate()
 
-  const bus = mockData.buses.find((b) => b.id === params.busId)
+  const booking = getBookingByRef(params.bookingRef)
+  const bus = booking ? mockData.buses.find((b) => b.id === booking.busId) : undefined
 
-  if (!bus || !params.seatNumbers || params.seatNumbers.length === 0) {
+  if (!booking || !bus) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center p-8 px-4 text-center">
         <Info className="mb-4 text-outline" size={48} />
@@ -54,7 +57,7 @@ const ConfirmationPage = () => {
             </h1>
             
             <p className="text-base leading-relaxed text-on-surface-variant md:text-lg">
-              We've successfully processed your payment. We sent your digital boarding pass and receipt to <strong>{params.email || "your email"}</strong>.
+              We've successfully processed your payment. We sent your digital boarding pass and receipt to <strong>{booking.email || "your email"}</strong>.
             </p>
           </div>
           
@@ -96,7 +99,7 @@ const ConfirmationPage = () => {
                   <p className="mb-1 text-[10px] font-bold tracking-[0.2em] uppercase">
                     Booking Ref
                   </p>
-                  <p className="font-mono text-sm tracking-wider">PMT-XY90</p>
+                  <p className="font-mono text-sm tracking-wider">{booking.bookingRef}</p>
                 </div>
               </div>
               
@@ -143,10 +146,10 @@ const ConfirmationPage = () => {
                     Passenger
                   </p>
                   <p className="truncate font-semibold text-on-surface md:text-lg">
-                    {params.fullName || "Guest User"}
+                    {booking.fullName || "Guest User"}
                   </p>
                   <p className="mt-1 text-xs text-on-surface-variant truncate">
-                    {params.phone || "No phone provided"}
+                    {booking.phone || "No phone provided"}
                   </p>
                 </div>
                 
@@ -155,7 +158,7 @@ const ConfirmationPage = () => {
                     Seat Allocation
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    {params.seatNumbers.map((seat) => (
+                    {booking.seatNumbers.map((seat) => (
                       <span key={seat} className="rounded bg-primary/10 px-2 py-0.5 text-sm font-bold text-primary md:text-base">
                         {seat}
                       </span>
@@ -171,7 +174,7 @@ const ConfirmationPage = () => {
                     Departure Date
                   </p>
                   <p className="font-semibold text-on-surface md:text-lg">
-                    Oct 24, 2024
+                    {booking.departureDate ? format(new Date(booking.departureDate), "MMM dd, yyyy") : "Date TBD"}
                   </p>
                 </div>
                 
@@ -192,7 +195,7 @@ const ConfirmationPage = () => {
                 {barcodeBars}
               </div>
               <p className="font-mono text-xs tracking-[0.3em] text-on-surface-variant">
-                10934898234-AXZ
+                {booking.bookingRef}
               </p>
             </div>
             

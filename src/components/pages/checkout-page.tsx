@@ -3,9 +3,11 @@ import { Wallet, Bus, CalendarDays, Lock, Info } from "lucide-react"
 import { Route } from "@/routes/checkout"
 import { data as mockData } from "@/data/mockData"
 import { useNavigate } from "@tanstack/react-router"
+import { generateBookingRef, saveBooking } from "@/lib/bookingStorage"
+import { format } from "date-fns"
 
 const CheckoutPage = () => {
-  const { busId, seatNumbers } = Route.useSearch()
+  const { busId, seatNumbers, departureDate } = Route.useSearch()
   const navigate = useNavigate()
 
   const [bookingDetails, setBookingDetails] = useState({
@@ -45,14 +47,24 @@ const CheckoutPage = () => {
   const isFormValid = isNameValid && isEmailValid && isPhoneValid
 
   const onConfirm = () => {
+    const ref = generateBookingRef()
+    
+    saveBooking({
+      bookingRef: ref,
+      busId,
+      seatNumbers,
+      fullName: bookingDetails.fullName,
+      email: bookingDetails.email,
+      phone: bookingDetails.phone,
+      departureDate,
+      bookedAt: new Date().toISOString()
+    })
+
     navigate({
       to: "/confirmation",
       search: {
-        busId,
-        seatNumbers: seatNumbers,
-        fullName: bookingDetails.fullName,
-        email: bookingDetails.email,
-        phone: bookingDetails.phone,
+        bookingRef: ref,
+        departureDate: departureDate,
       },
     })
   }
@@ -225,7 +237,7 @@ const CheckoutPage = () => {
                     </div>
                     <div className="mt-3 flex items-center gap-2 text-[10px] text-on-surface-variant md:text-xs">
                       <CalendarDays size={16} />
-                      Oct 24, 2024 • {bus.departureTime}
+                      {departureDate ? format(new Date(departureDate), "MMM dd, yyyy") : "Date TBD"} • {bus.departureTime}
                     </div>
                   </div>
                 </div>

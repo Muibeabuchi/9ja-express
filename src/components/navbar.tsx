@@ -1,8 +1,7 @@
-import { Link, useNavigate } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { Bell, User } from "lucide-react"
 
 const Navbar = () => {
-  const navigate = useNavigate()
   return (
     <nav className="glass ambient-shadow sticky inset-x-0 top-0 z-50 mx-auto w-full">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 md:h-20">

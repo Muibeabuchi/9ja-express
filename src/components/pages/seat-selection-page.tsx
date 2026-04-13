@@ -14,10 +14,12 @@ import Seat from "../seat"
 import type { Bus } from "@/data/types"
 
 const ExecutiveCoachGrid = ({
+  // num,
   bus,
   selectedSeats,
   onSelectSeat,
 }: {
+  // num:number;
   bus: Bus
   selectedSeats: number[]
   onSelectSeat: (n: number) => void
@@ -33,7 +35,7 @@ const ExecutiveCoachGrid = ({
             <div className="flex justify-center">
               {rowIndex * 4 + 1 <= regularSeats && (
                 <Seat
-                  num={rowIndex * 4 + 1}
+                  // num={rowIndex * 4 + 1}
                   isSelected={selectedSeats.includes(rowIndex * 4 + 1)}
                   isAvailable={bus.availableSeats.includes(rowIndex * 4 + 1)}
                   onClick={() => onSelectSeat(rowIndex * 4 + 1)}
@@ -43,7 +45,7 @@ const ExecutiveCoachGrid = ({
             <div className="flex justify-center">
               {rowIndex * 4 + 2 <= regularSeats && (
                 <Seat
-                  num={rowIndex * 4 + 2}
+                  // num={rowIndex * 4 + 2}
                   isSelected={selectedSeats.includes(rowIndex * 4 + 2)}
                   isAvailable={bus.availableSeats.includes(rowIndex * 4 + 2)}
                   onClick={() => onSelectSeat(rowIndex * 4 + 2)}
@@ -56,7 +58,7 @@ const ExecutiveCoachGrid = ({
             <div className="flex justify-center">
               {rowIndex * 4 + 3 <= regularSeats && (
                 <Seat
-                  num={rowIndex * 4 + 3}
+                  // num={rowIndex * 4 + 3}
                   isSelected={selectedSeats.includes(rowIndex * 4 + 3)}
                   isAvailable={bus.availableSeats.includes(rowIndex * 4 + 3)}
                   onClick={() => onSelectSeat(rowIndex * 4 + 3)}
@@ -66,7 +68,7 @@ const ExecutiveCoachGrid = ({
             <div className="flex justify-center">
               {rowIndex * 4 + 4 <= regularSeats && (
                 <Seat
-                  num={rowIndex * 4 + 4}
+                  // num={rowIndex * 4 + 4}
                   isSelected={selectedSeats.includes(rowIndex * 4 + 4)}
                   isAvailable={bus.availableSeats.includes(rowIndex * 4 + 4)}
                   onClick={() => onSelectSeat(rowIndex * 4 + 4)}
@@ -83,7 +85,7 @@ const ExecutiveCoachGrid = ({
             <div key={seatNum} className="flex flex-1 justify-center">
               {seatNum <= bus.totalSeats && (
                 <Seat
-                  num={seatNum}
+                  // num={seatNum}
                   isSelected={selectedSeats.includes(seatNum)}
                   isAvailable={bus.availableSeats.includes(seatNum)}
                   onClick={() => onSelectSeat(seatNum)}
@@ -116,7 +118,7 @@ const SmartCoachGrid = ({
           <div className="flex justify-center">
             {rowIndex * 3 + 1 <= bus.totalSeats && (
               <Seat
-                num={rowIndex * 3 + 1}
+                // num={rowIndex * 3 + 1}
                 isSelected={selectedSeats.includes(rowIndex * 3 + 1)}
                 isAvailable={bus.availableSeats.includes(rowIndex * 3 + 1)}
                 onClick={() => onSelectSeat(rowIndex * 3 + 1)}
@@ -126,7 +128,7 @@ const SmartCoachGrid = ({
           <div className="flex justify-center">
             {rowIndex * 3 + 2 <= bus.totalSeats && (
               <Seat
-                num={rowIndex * 3 + 2}
+                // num={rowIndex * 3 + 2}
                 isSelected={selectedSeats.includes(rowIndex * 3 + 2)}
                 isAvailable={bus.availableSeats.includes(rowIndex * 3 + 2)}
                 onClick={() => onSelectSeat(rowIndex * 3 + 2)}
@@ -139,7 +141,7 @@ const SmartCoachGrid = ({
           <div className="flex justify-center">
             {rowIndex * 3 + 3 <= bus.totalSeats && (
               <Seat
-                num={rowIndex * 3 + 3}
+                // num={rowIndex * 3 + 3}
                 isSelected={selectedSeats.includes(rowIndex * 3 + 3)}
                 isAvailable={bus.availableSeats.includes(rowIndex * 3 + 3)}
                 onClick={() => onSelectSeat(rowIndex * 3 + 3)}
@@ -175,7 +177,7 @@ const BlazerGrid = ({
         </div>
         <div className="flex flex-col items-center">
           <Seat
-            num={0}
+            // num={0}
             isSelected={false}
             isAvailable={false}
             onClick={() => {}}
@@ -195,7 +197,7 @@ const BlazerGrid = ({
               return (
                 <div key={colIndex} className="flex justify-center">
                   <Seat
-                    num={seatNum}
+                    // num={seatNum}
                     isSelected={selectedSeats.includes(seatNum)}
                     isAvailable={bus.availableSeats.includes(seatNum)}
                     onClick={() => onSelectSeat(seatNum)}
@@ -210,7 +212,7 @@ const BlazerGrid = ({
       {/* Back seat */}
       <div className="mt-4 flex justify-center md:mt-6">
         <Seat
-          num={bus.totalSeats}
+          // num={bus.totalSeats}
           isSelected={selectedSeats.includes(bus.totalSeats)}
           isAvailable={bus.availableSeats.includes(bus.totalSeats)}
           onClick={() => onSelectSeat(bus.totalSeats)}
@@ -222,7 +224,7 @@ const BlazerGrid = ({
 }
 
 const SeatSelectionPage = () => {
-  const { busId } = Route.useSearch()
+  const { busId, departureDate } = Route.useSearch()
   const navigate = useNavigate()
   const [selectedSeats, setSelectedSeats] = useState<number[]>([])
 
@@ -263,6 +265,7 @@ const SeatSelectionPage = () => {
       search: {
         busId,
         seatNumbers: selectedSeats,
+        departureDate,
       },
     })
   }

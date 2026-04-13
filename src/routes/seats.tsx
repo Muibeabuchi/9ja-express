@@ -4,6 +4,7 @@ import { z } from "zod"
 
 const seatsSearchSchema = z.object({
   busId: z.string().catch(""),
+  departureDate: z.string().catch(""),
 })
 
 export const Route = createFileRoute("/seats")({

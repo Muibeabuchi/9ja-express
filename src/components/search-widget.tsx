@@ -26,6 +26,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { Calendar } from "./ui/calendar"
 import { cn } from "@/lib/utils"
 import { Button } from "./ui/button"
+import { isValidBookingRef } from "@/lib/bookingStorage"
 
 const today = new Date()
 today.setHours(0, 0, 0, 0)
@@ -61,6 +62,33 @@ const SearchWidget = () => {
         returnDate: searchParams.returnDate,
         tripType: searchParams.tripType,
       },
+    })
+  }
+
+  const [trackRef, setTrackRef] = useState("")
+  const [trackError, setTrackError] = useState("")
+
+  const handleTrackTrip = () => {
+    if (!trackRef) {
+      setTrackError("Please enter a booking reference")
+      return
+    }
+    
+    // Auto-format for validation
+    let formattedRef = trackRef.trim().toUpperCase()
+    if (!formattedRef.startsWith("PMT-")) {
+      formattedRef = "PMT-" + formattedRef
+    }
+    
+    if (!isValidBookingRef(formattedRef)) {
+      setTrackError("Reference must be 12 chars (e.g. PMT-A1B2C3D4)")
+      return
+    }
+    
+    setTrackError("")
+    navigate({
+      to: "/manage-booking",
+      search: { ref: formattedRef }
     })
   }
 
@@ -349,23 +377,31 @@ const SearchWidget = () => {
 
             <TabsContent value="track-your-trip" className="mt-0">
               <div className="flex flex-col items-center justify-center py-6">
-                <div className="flex w-full max-w-2xl flex-col rounded-4xl border border-outline-variant/20 bg-surface-container-low p-2 shadow-sm transition-all focus-within:ring-2 focus-within:ring-primary/20 sm:flex-row">
+                <div className={cn("flex w-full max-w-2xl flex-col rounded-4xl border bg-surface-container-low p-2 shadow-sm transition-all focus-within:ring-2 focus-within:ring-primary/20 sm:flex-row", trackError ? "border-error focus-within:ring-error/20" : "border-outline-variant/20")}>
                   <div className="flex grow items-center gap-4 px-6 py-4 sm:py-3">
-                    <Navigation className="shrink-0 text-primary" size={24} />
+                    <Navigation className={cn("shrink-0", trackError ? "text-error" : "text-primary")} size={24} />
                     <div className="grow">
                       <label className="mb-0.5 block text-[10px] font-bold tracking-widest text-outline uppercase sm:text-xs">
-                        Booking Reference
+                        {trackError ? <span className="text-error">{trackError}</span> : "Booking Reference"}
                       </label>
                       <input
                         type="text"
-                        placeholder="e.g. EZ12345"
+                        placeholder="e.g. PMT-A1B2C3D4"
+                        value={trackRef}
+                        onChange={(e) => {
+                          setTrackRef(e.target.value)
+                          if (trackError) setTrackError("")
+                        }}
+                        onKeyDown={(e) => e.key === "Enter" && handleTrackTrip()}
                         className="w-full border-none bg-transparent p-0 text-base font-bold text-on-surface placeholder-outline/40 outline-none focus:ring-0 sm:text-lg"
                       />
                     </div>
                   </div>
 
                   <div className="w-full p-1 sm:w-auto">
-                    <button className="w-full rounded-full bg-primary px-8 py-4 text-xs font-black tracking-widest text-on-primary uppercase shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] sm:w-auto sm:py-5 sm:text-sm">
+                    <button 
+                      onClick={handleTrackTrip}
+                      className="w-full rounded-full bg-primary px-8 py-4 text-xs font-black tracking-widest text-on-primary uppercase shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] sm:w-auto sm:py-5 sm:text-sm">
                       Track
                     </button>
                   </div>

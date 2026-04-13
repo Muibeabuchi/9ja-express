@@ -18,7 +18,10 @@ const SearchResultsPage = () => {
   )
 
   const handleSelectBus = (busId: string) => {
-    navigate({ to: "/seats", search: { busId } })
+    navigate({
+      to: "/seats",
+      search: { busId, departureDate: departureDate ?? "" },
+    })
   }
 
   return (
