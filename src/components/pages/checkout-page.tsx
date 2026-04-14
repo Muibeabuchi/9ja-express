@@ -5,6 +5,7 @@ import { data as mockData } from "@/data/mockData"
 import { useNavigate } from "@tanstack/react-router"
 import { generateBookingRef, saveBooking } from "@/lib/bookingStorage"
 import { format } from "date-fns"
+import usePaystack from "@/lib/paystack"
 
 const CheckoutPage = () => {
   const { busId, seatNumbers, departureDate } = Route.useSearch()
@@ -56,6 +57,7 @@ const CheckoutPage = () => {
     isKinPhoneValid
 
   const onConfirm = () => {
+    console.log("paystack payment was successfull")
     const ref = generateBookingRef()
 
     saveBooking({
@@ -71,6 +73,7 @@ const CheckoutPage = () => {
       bookedAt: new Date().toISOString(),
     })
 
+    console.log("i am about to navigate")
     navigate({
       to: "/confirmation",
       search: {
@@ -79,6 +82,12 @@ const CheckoutPage = () => {
       },
     })
   }
+
+  const { initializePayment } = usePaystack({
+    amount: totalAmount,
+    email: bookingDetails.email,
+    onSuccess: onConfirm,
+  })
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-12">
@@ -250,7 +259,7 @@ const CheckoutPage = () => {
               </div>
               <button
                 disabled={!isFormValid}
-                onClick={onConfirm}
+                onClick={initializePayment}
                 className="signature-gradient flex h-14 w-full items-center justify-center gap-3 rounded-xl text-base font-bold text-white shadow-[0_40px_40px_-15px_rgba(0,74,198,0.15)] transition-transform active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 md:h-16 md:text-lg"
               >
                 <Lock size={20} fill="currentColor" />
