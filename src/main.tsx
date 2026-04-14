@@ -34,6 +34,7 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <RouterProvider router={router} />
       <TanStackDevtools
+        config={{ position: "bottom-left" }}
         plugins={[
           {
             name: "Tantack Router",

@@ -45,8 +45,27 @@ export type Booking = {
   paymentMethod: PaymentMethod
 }
 
+export type CharterVehicle = {
+  id: string
+  model: string
+  type: string
+  capacity: number
+  baseRatePerDay: number
+  amenities: string[]
+  imageURL: string
+  availableQuantity: number
+}
+
+export type GlobalSurcharges = {
+  residencePickupFee: number
+  driverAccommodationPerNight: number
+  retainBusDailyFee: number
+}
+
 export type AppData = {
   locations: Location[]
   buses: Bus[]
   bookings: Booking[]
+  charterFleet?: CharterVehicle[]
+  globalSurcharges?: GlobalSurcharges
 }

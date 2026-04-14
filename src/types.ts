@@ -8,6 +8,8 @@ interface SearchParams {
   departureDate: string
   returnDate?: string
   tripType: TripType
+  originType?: "terminal" | "residence"
+  purpose?: string
 }
 
 interface BookingDetails {
@@ -15,6 +17,8 @@ interface BookingDetails {
   email: string
   phone: string
   seatNumbers: number[]
+  nextOfKinName?: string
+  nextOfKinPhone?: string
 }
 
 export type { Page, TripType, SearchParams, BookingDetails }

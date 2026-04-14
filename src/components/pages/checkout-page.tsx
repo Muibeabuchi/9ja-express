@@ -14,6 +14,8 @@ const CheckoutPage = () => {
     fullName: "",
     email: "",
     phone: "",
+    nextOfKinName: "",
+    nextOfKinPhone: "",
   })
 
   // Attempt to load the selected bus
@@ -44,11 +46,18 @@ const CheckoutPage = () => {
   const isNameValid = bookingDetails.fullName.trim().length > 2
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(bookingDetails.email)
   const isPhoneValid = bookingDetails.phone.trim().length >= 10
-  const isFormValid = isNameValid && isEmailValid && isPhoneValid
+  const isKinNameValid = bookingDetails.nextOfKinName.trim().length > 2
+  const isKinPhoneValid = bookingDetails.nextOfKinPhone.trim().length >= 10
+  const isFormValid =
+    isNameValid &&
+    isEmailValid &&
+    isPhoneValid &&
+    isKinNameValid &&
+    isKinPhoneValid
 
   const onConfirm = () => {
     const ref = generateBookingRef()
-    
+
     saveBooking({
       bookingRef: ref,
       busId,
@@ -56,8 +65,10 @@ const CheckoutPage = () => {
       fullName: bookingDetails.fullName,
       email: bookingDetails.email,
       phone: bookingDetails.phone,
+      nextOfKinName: bookingDetails.nextOfKinName,
+      nextOfKinPhone: bookingDetails.nextOfKinPhone,
       departureDate,
-      bookedAt: new Date().toISOString()
+      bookedAt: new Date().toISOString(),
     })
 
     navigate({
@@ -162,6 +173,53 @@ const CheckoutPage = () => {
                   />
                 </div>
               </div>
+              <div className="flex flex-col gap-2 md:col-span-1">
+                <label className="font-label text-[10px] font-bold tracking-widest text-outline uppercase">
+                  NEXT OF KIN NAME
+                </label>
+                <input
+                  className={`h-12 rounded-lg border-none bg-surface-container-lowest px-4 text-sm ring-1 transition-all outline-none focus:ring-2 focus:ring-primary ${
+                    bookingDetails.nextOfKinName && !isKinNameValid
+                      ? "ring-error focus:ring-error"
+                      : "ring-outline-variant/20"
+                  }`}
+                  placeholder="Jane Doe"
+                  type="text"
+                  value={bookingDetails.nextOfKinName}
+                  onChange={(e) =>
+                    setBookingDetails({
+                      ...bookingDetails,
+                      nextOfKinName: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="flex flex-col gap-2 md:col-span-1">
+                <label className="font-label text-[10px] font-bold tracking-widest text-outline uppercase">
+                  NEXT OF KIN PHONE
+                </label>
+                <div className="flex gap-3">
+                  <div className="flex h-12 items-center rounded-lg border-none bg-surface-container-low px-4 text-sm font-medium text-on-surface-variant ring-1 ring-outline-variant/20">
+                    +234
+                  </div>
+                  <input
+                    className={`h-12 grow rounded-lg border-none bg-surface-container-lowest px-4 text-sm ring-1 transition-all outline-none focus:ring-2 focus:ring-primary ${
+                      bookingDetails.nextOfKinPhone && !isKinPhoneValid
+                        ? "ring-error focus:ring-error"
+                        : "ring-outline-variant/20"
+                    }`}
+                    placeholder="812 345 6789"
+                    type="tel"
+                    value={bookingDetails.nextOfKinPhone}
+                    onChange={(e) =>
+                      setBookingDetails({
+                        ...bookingDetails,
+                        nextOfKinPhone: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </section>
 
@@ -237,7 +295,10 @@ const CheckoutPage = () => {
                     </div>
                     <div className="mt-3 flex items-center gap-2 text-[10px] text-on-surface-variant md:text-xs">
                       <CalendarDays size={16} />
-                      {departureDate ? format(new Date(departureDate), "MMM dd, yyyy") : "Date TBD"} • {bus.departureTime}
+                      {departureDate
+                        ? format(new Date(departureDate), "MMM dd, yyyy")
+                        : "Date TBD"}{" "}
+                      • {bus.departureTime}
                     </div>
                   </div>
                 </div>
@@ -261,7 +322,7 @@ const CheckoutPage = () => {
                     <span>Included</span>
                   </div>
                 </div>
-                <div className="h-[1px] bg-surface-container-highest"></div>
+                <div className="h-px bg-surface-container-highest"></div>
                 {/* Total */}
                 <div className="flex items-end justify-between">
                   <div>

@@ -12,9 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SeatsRouteImport } from './routes/seats'
 import { Route as SearchResultsRouteImport } from './routes/search-results'
 import { Route as ManageBookingRouteImport } from './routes/manage-booking'
+import { Route as HireFleetRouteImport } from './routes/hire-fleet'
+import { Route as HireConfirmationRouteImport } from './routes/hire-confirmation'
+import { Route as HireCheckoutRouteImport } from './routes/hire-checkout'
 import { Route as ConfirmationRouteImport } from './routes/confirmation'
 import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SeatsRoute = SeatsRouteImport.update({
@@ -32,6 +34,21 @@ const ManageBookingRoute = ManageBookingRouteImport.update({
   path: '/manage-booking',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HireFleetRoute = HireFleetRouteImport.update({
+  id: '/hire-fleet',
+  path: '/hire-fleet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HireConfirmationRoute = HireConfirmationRouteImport.update({
+  id: '/hire-confirmation',
+  path: '/hire-confirmation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HireCheckoutRoute = HireCheckoutRouteImport.update({
+  id: '/hire-checkout',
+  path: '/hire-checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConfirmationRoute = ConfirmationRouteImport.update({
   id: '/confirmation',
   path: '/confirmation',
@@ -42,11 +59,6 @@ const CheckoutRoute = CheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -55,18 +67,22 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/checkout': typeof CheckoutRoute
   '/confirmation': typeof ConfirmationRoute
+  '/hire-checkout': typeof HireCheckoutRoute
+  '/hire-confirmation': typeof HireConfirmationRoute
+  '/hire-fleet': typeof HireFleetRoute
   '/manage-booking': typeof ManageBookingRoute
   '/search-results': typeof SearchResultsRoute
   '/seats': typeof SeatsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/checkout': typeof CheckoutRoute
   '/confirmation': typeof ConfirmationRoute
+  '/hire-checkout': typeof HireCheckoutRoute
+  '/hire-confirmation': typeof HireConfirmationRoute
+  '/hire-fleet': typeof HireFleetRoute
   '/manage-booking': typeof ManageBookingRoute
   '/search-results': typeof SearchResultsRoute
   '/seats': typeof SeatsRoute
@@ -74,9 +90,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/checkout': typeof CheckoutRoute
   '/confirmation': typeof ConfirmationRoute
+  '/hire-checkout': typeof HireCheckoutRoute
+  '/hire-confirmation': typeof HireConfirmationRoute
+  '/hire-fleet': typeof HireFleetRoute
   '/manage-booking': typeof ManageBookingRoute
   '/search-results': typeof SearchResultsRoute
   '/seats': typeof SeatsRoute
@@ -85,27 +103,33 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/checkout'
     | '/confirmation'
+    | '/hire-checkout'
+    | '/hire-confirmation'
+    | '/hire-fleet'
     | '/manage-booking'
     | '/search-results'
     | '/seats'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/checkout'
     | '/confirmation'
+    | '/hire-checkout'
+    | '/hire-confirmation'
+    | '/hire-fleet'
     | '/manage-booking'
     | '/search-results'
     | '/seats'
   id:
     | '__root__'
     | '/'
-    | '/about'
     | '/checkout'
     | '/confirmation'
+    | '/hire-checkout'
+    | '/hire-confirmation'
+    | '/hire-fleet'
     | '/manage-booking'
     | '/search-results'
     | '/seats'
@@ -113,9 +137,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
   CheckoutRoute: typeof CheckoutRoute
   ConfirmationRoute: typeof ConfirmationRoute
+  HireCheckoutRoute: typeof HireCheckoutRoute
+  HireConfirmationRoute: typeof HireConfirmationRoute
+  HireFleetRoute: typeof HireFleetRoute
   ManageBookingRoute: typeof ManageBookingRoute
   SearchResultsRoute: typeof SearchResultsRoute
   SeatsRoute: typeof SeatsRoute
@@ -144,6 +170,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManageBookingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hire-fleet': {
+      id: '/hire-fleet'
+      path: '/hire-fleet'
+      fullPath: '/hire-fleet'
+      preLoaderRoute: typeof HireFleetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hire-confirmation': {
+      id: '/hire-confirmation'
+      path: '/hire-confirmation'
+      fullPath: '/hire-confirmation'
+      preLoaderRoute: typeof HireConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hire-checkout': {
+      id: '/hire-checkout'
+      path: '/hire-checkout'
+      fullPath: '/hire-checkout'
+      preLoaderRoute: typeof HireCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/confirmation': {
       id: '/confirmation'
       path: '/confirmation'
@@ -158,13 +205,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -177,9 +217,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
   CheckoutRoute: CheckoutRoute,
   ConfirmationRoute: ConfirmationRoute,
+  HireCheckoutRoute: HireCheckoutRoute,
+  HireConfirmationRoute: HireConfirmationRoute,
+  HireFleetRoute: HireFleetRoute,
   ManageBookingRoute: ManageBookingRoute,
   SearchResultsRoute: SearchResultsRoute,
   SeatsRoute: SeatsRoute,
