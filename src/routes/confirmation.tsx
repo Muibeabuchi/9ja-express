@@ -9,9 +9,5 @@ const confirmationSearchSchema = z.object({
 
 export const Route = createFileRoute("/confirmation")({
   validateSearch: confirmationSearchSchema,
-  component: RouteComponent,
+  component: ConfirmationPage,
 })
-
-function RouteComponent() {
-  return <ConfirmationPage />
-}

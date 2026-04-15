@@ -1,7 +1,7 @@
 import { ArrowRight, Bus, Minus, Plus, ShieldCheck } from "lucide-react"
 import type { ReactNode } from "react"
 import { data as mockData } from "@/data/mockData"
-import { useNavigate } from "@tanstack/react-router"
+import { useNavigate, useSearch } from "@tanstack/react-router"
 
 type Props = {
   title: ReactNode
@@ -40,9 +40,22 @@ export default function HireFleetSummaryContent({
   totalDays,
 }: Props) {
   const navigate = useNavigate()
+  const search = useSearch({ from: "/hire-fleet" })
   const handleNavigate = () => {
-    console.log("navigate to confirmation page")
-    navigate({ to: "/hire-checkout" })
+    console.log("navigate to checkout page")
+    navigate({
+      to: "/hire-checkout",
+      search: {
+        vehicles: JSON.stringify(selectedVehicles),
+        totals: JSON.stringify(totals),
+        totalDays,
+        origin,
+        destination,
+        originType: search.originType,
+        start: search.start,
+        end: search.end,
+      },
+    })
   }
   return (
     <>
@@ -71,6 +84,7 @@ export default function HireFleetSummaryContent({
                 Selected Vehicles
               </h4>
               {Object.entries(selectedVehicles)
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 .filter(([_, count]) => count > 0)
                 .map(([id, count]) => {
                   const v = mockData.charterFleet?.find((x) => x.id === id)

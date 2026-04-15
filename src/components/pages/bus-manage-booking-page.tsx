@@ -1,43 +1,62 @@
-import { Route } from "@/routes/confirmation"
+import { Route } from "@/routes/manage-booking"
 import { data as mockData } from "@/data/mockData"
-import { useNavigate } from "@tanstack/react-router"
-import { CheckCircle, Download, Bus, Home, Info } from "lucide-react"
 import { getBookingByRef } from "@/lib/bookingStorage"
+import { useNavigate } from "@tanstack/react-router"
 import { format } from "date-fns"
+import {
+  Bus,
+  Calendar,
+  Download,
+  SearchX,
+  MapPin,
+  XCircle,
+  ChevronRight,
+} from "lucide-react"
 
 const randomizer = () => Math.floor(Math.random() * 6)
 
-const ConfirmationPage = () => {
-  const params = Route.useSearch()
+const BusManageBookingPage = () => {
+  const { ref } = Route.useSearch()
   const navigate = useNavigate()
 
-  const booking = getBookingByRef(params.bookingRef)
+  const booking = getBookingByRef(ref)
   const bus = booking
     ? mockData.buses.find((b) => b.id === booking.busId)
-    : undefined
+    : null
 
+  // Empty State
   if (!booking || !bus) {
     return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center p-8 px-4 text-center">
-        <Info className="mb-4 text-outline" size={48} />
-        <h2 className="font-headline text-2xl font-bold">No Booking Found</h2>
-        <p className="mt-2 text-on-surface-variant">
-          We couldn't find the details for your confirmation. Your session may
-          have expired.
+      <div className="mx-auto flex min-h-[70vh] max-w-lg flex-col items-center justify-center px-4 text-center">
+        <div className="relative mb-8">
+          <div className="bg-error/20 absolute inset-0 animate-ping rounded-full" />
+          <div className="bg-error/10 text-error relative flex h-24 w-24 items-center justify-center rounded-full">
+            <SearchX size={48} strokeWidth={1.5} />
+          </div>
+        </div>
+        <h1 className="mb-4 font-headline text-3xl font-black text-on-surface">
+          Booking Not Found
+        </h1>
+        <p className="mb-10 text-base leading-relaxed text-on-surface-variant">
+          We couldn't locate any booking matching the reference{" "}
+          <strong className="font-mono text-on-surface">{ref || "N/A"}</strong>.
+          Please double-check the reference number or book a new trip.
         </p>
         <button
           onClick={() => navigate({ to: "/" })}
-          className="mt-6 rounded-xl bg-primary px-6 py-3 font-bold text-on-primary shadow-lg transition-transform hover:scale-105 active:scale-95"
+          className="group flex w-full max-w-[280px] items-center justify-center gap-3 rounded-full bg-primary px-8 py-4 font-bold tracking-widest text-on-primary uppercase shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
-          Return to Home
+          Book a Trip
+          <ChevronRight
+            size={18}
+            className="transition-transform group-hover:translate-x-1"
+          />
         </button>
       </div>
     )
   }
 
-  const handleHome = () => navigate({ to: "/" })
-
-  // Generate an aesthetic Fake Barcode to look like a real boarding pass
+  // Pre-generate barcode bars to look consistent
   const barcodeBars = Array.from({ length: 42 }).map((_, i) => {
     const width = [1, 2, 3, 4, 1, 2][randomizer()]
     return (
@@ -50,54 +69,85 @@ const ConfirmationPage = () => {
   })
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:py-28">
-      <div className="flex flex-col items-center justify-center gap-12 lg:flex-row lg:items-start lg:gap-20">
-        {/* Left Column: Success Narrative */}
-        <div className="flex max-w-lg flex-1 flex-col justify-center space-y-8 text-center lg:sticky lg:top-32 lg:text-left">
-          <div className="space-y-6">
-            <div className="mx-auto inline-flex h-20 w-20 items-center justify-center rounded-[2rem] bg-green-500/10 text-green-500 lg:mx-0">
-              <CheckCircle size={40} strokeWidth={2.5} />
-            </div>
-
-            <h1 className="font-headline text-4xl leading-tight font-black tracking-tight text-on-surface md:text-5xl lg:text-6xl">
-              Your journey is <br className="hidden md:block" />
-              <span className="bg-gradient-to-r from-green-500 to-emerald-700 bg-clip-text text-transparent">
-                confirmed
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-16">
+      <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-20">
+        {/* Left Column: Booking Management Actions */}
+        <div className="flex-1 space-y-8 lg:sticky lg:top-32">
+          <div>
+            <div className="border-success/30 bg-success/10 text-success mb-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold tracking-widest uppercase">
+              <span className="relative flex h-2 w-2">
+                <span className="bg-success absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
+                <span className="bg-success relative inline-flex h-2 w-2 rounded-full"></span>
               </span>
-              .
+              Active Booking
+            </div>
+            <h1 className="mb-4 font-headline text-4xl font-black text-on-surface md:text-5xl">
+              Manage Trip
             </h1>
-
-            <p className="text-base leading-relaxed text-on-surface-variant md:text-lg">
-              We've successfully processed your payment. We sent your digital
-              boarding pass and receipt to{" "}
-              <strong>{booking.email || "your email"}</strong>.
+            <p className="text-sm leading-relaxed text-on-surface-variant md:text-base">
+              View your boarding pass, download receipt, or make changes to your
+              upcoming trip.
             </p>
           </div>
 
-          <div className="flex flex-col justify-center gap-4 pt-6 sm:flex-row lg:justify-start">
-            <button className="signature-gradient flex items-center justify-center gap-2 rounded-xl px-8 py-4 font-bold text-white shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
-              <Download size={20} />
-              Download Receipt
+          <div className="grid gap-2 sm:grid-cols-2 lg:gap-4">
+            <button className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-6 transition-colors hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98]">
+              <Download size={24} className="text-primary" />
+              <span className="text-sm font-bold">Download Receipt</span>
             </button>
-            <button
-              onClick={handleHome}
-              className="group flex items-center justify-center gap-2 rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-8 py-4 font-bold transition-all hover:border-primary/30 hover:bg-primary/5 active:scale-95"
-            >
-              <Home
-                size={20}
-                className="text-on-surface-variant transition-colors group-hover:text-primary"
-              />
-              Back to Home
+            <button className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-6 transition-colors hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98]">
+              <Calendar size={24} className="text-primary" />
+              <span className="text-sm font-bold">Reschedule</span>
             </button>
+            <button className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-6 transition-colors hover:border-primary/30 hover:bg-primary/5 active:scale-[0.98]">
+              <MapPin size={24} className="text-primary" />
+              <span className="text-sm font-bold">Track Bus Location</span>
+            </button>
+            <button className="border-error/30 bg-error/5 hover:border-error hover:bg-error/10 flex flex-col items-center justify-center gap-3 rounded-2xl border p-6 transition-colors active:scale-[0.98]">
+              <XCircle size={24} className="text-error" />
+              <span className="text-error text-sm font-bold">Cancel Trip</span>
+            </button>
+          </div>
+
+          <div className="rounded-2xl bg-surface-container-low p-6">
+            <h3 className="mb-4 font-bold">Booking Details</h3>
+            <ul className="space-y-3 text-sm text-on-surface-variant">
+              <li className="flex justify-between">
+                <span>Booked On</span>
+                <span className="font-bold text-on-surface">
+                  {booking.bookedAt
+                    ? format(
+                        new Date(booking.bookedAt),
+                        "MMM dd, yyyy • hh:mm a"
+                      )
+                    : "N/A"}
+                </span>
+              </li>
+              <li className="flex justify-between">
+                <span>Payment Status</span>
+                <span className="text-success font-bold text-on-surface">
+                  Paid
+                </span>
+              </li>
+              <li className="flex justify-between">
+                <span>Amount</span>
+                <span className="font-bold text-on-surface">
+                  ₦
+                  {(
+                    (bus.price + 3500) *
+                    booking.seatNumbers.length
+                  ).toLocaleString()}
+                </span>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Right Column: Digital Ticket Card */}
-        <div className="relative w-full max-w-[420px] flex-1">
+        {/* Right Column: The Ticket */}
+        <div className="relative mx-auto w-full max-w-[420px] flex-1 lg:mx-0">
           {/* Ambient Glow */}
-          <div className="absolute -top-20 -right-20 -z-10 h-64 w-64 rounded-full bg-primary/20 blur-[80px] md:h-96 md:w-96"></div>
+          <div className="absolute -top-20 -right-20 -z-10 h-64 w-64 rounded-full bg-primary/20 blur-[80px]"></div>
 
-          {/* Ticket Container */}
           <div className="relative flex flex-col overflow-hidden rounded-[2.5rem] bg-surface-container-lowest shadow-2xl ring-1 shadow-primary/10 ring-outline-variant/10">
             {/* Ticket Header Segment */}
             <div className="signature-gradient relative px-8 py-8 text-white md:px-10 md:py-10">
@@ -225,4 +275,4 @@ const ConfirmationPage = () => {
   )
 }
 
-export default ConfirmationPage
+export default BusManageBookingPage

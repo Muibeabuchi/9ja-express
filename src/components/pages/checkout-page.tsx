@@ -22,6 +22,54 @@ const CheckoutPage = () => {
   // Attempt to load the selected bus
   const bus = mockData.buses.find((b) => b.id === busId)
 
+  const onConfirm = () => {
+    console.log("paystack payment was successfull")
+    const ref = generateBookingRef()
+
+    saveBooking({
+      bookingRef: ref,
+      busId,
+      seatNumbers,
+      fullName: bookingDetails.fullName,
+      email: bookingDetails.email,
+      phone: bookingDetails.phone,
+      // nextOfKinName: bookingDetails.nextOfKinName,
+      // nextOfKinPhone: bookingDetails.nextOfKinPhone,
+      departureDate,
+      bookedAt: new Date().toISOString(),
+    })
+
+    console.log("i am about to navigate")
+    navigate({
+      to: "/confirmation",
+      search: {
+        bookingRef: ref,
+        departureDate: departureDate,
+      },
+    })
+  }
+  const totalFare = !bus ? 0 : bus.price * seatNumbers.length
+  const bookingFee = 3500 * seatNumbers.length
+  const totalAmount = totalFare + bookingFee
+
+  const isNameValid = bookingDetails.fullName.trim().length > 2
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(bookingDetails.email)
+  const isPhoneValid = bookingDetails.phone.trim().length >= 10
+  const isKinNameValid = bookingDetails.nextOfKinName.trim().length > 2
+  const isKinPhoneValid = bookingDetails.nextOfKinPhone.trim().length >= 10
+  const isFormValid =
+    isNameValid &&
+    isEmailValid &&
+    isPhoneValid &&
+    isKinNameValid &&
+    isKinPhoneValid
+
+  const { initializePayment } = usePaystack({
+    amount: totalAmount,
+    email: bookingDetails.email,
+    onSuccess: onConfirm,
+  })
+
   if (!bus || !seatNumbers || seatNumbers.length === 0) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center p-8 px-4 text-center">
@@ -39,55 +87,6 @@ const CheckoutPage = () => {
       </div>
     )
   }
-
-  const totalFare = bus.price * seatNumbers.length
-  const bookingFee = 3500 * seatNumbers.length
-  const totalAmount = totalFare + bookingFee
-
-  const isNameValid = bookingDetails.fullName.trim().length > 2
-  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(bookingDetails.email)
-  const isPhoneValid = bookingDetails.phone.trim().length >= 10
-  const isKinNameValid = bookingDetails.nextOfKinName.trim().length > 2
-  const isKinPhoneValid = bookingDetails.nextOfKinPhone.trim().length >= 10
-  const isFormValid =
-    isNameValid &&
-    isEmailValid &&
-    isPhoneValid &&
-    isKinNameValid &&
-    isKinPhoneValid
-
-  const onConfirm = () => {
-    console.log("paystack payment was successfull")
-    const ref = generateBookingRef()
-
-    saveBooking({
-      bookingRef: ref,
-      busId,
-      seatNumbers,
-      fullName: bookingDetails.fullName,
-      email: bookingDetails.email,
-      phone: bookingDetails.phone,
-      nextOfKinName: bookingDetails.nextOfKinName,
-      nextOfKinPhone: bookingDetails.nextOfKinPhone,
-      departureDate,
-      bookedAt: new Date().toISOString(),
-    })
-
-    console.log("i am about to navigate")
-    navigate({
-      to: "/confirmation",
-      search: {
-        bookingRef: ref,
-        departureDate: departureDate,
-      },
-    })
-  }
-
-  const { initializePayment } = usePaystack({
-    amount: totalAmount,
-    email: bookingDetails.email,
-    onSuccess: onConfirm,
-  })
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-12">

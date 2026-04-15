@@ -1,27 +1,127 @@
+import { useState } from "react"
+import { useForm } from "@tanstack/react-form"
+import { z } from "zod"
 import { useNavigate } from "@tanstack/react-router"
+import { Route } from "@/routes/hire-checkout"
+import { data as mockData } from "@/data/mockData"
+import {
+  generateHireBookingRef,
+  saveHireBooking,
+} from "@/lib/hireBookingStorage"
+import usePaystack from "@/lib/paystack"
+import { format } from "date-fns"
 import {
   Navigation,
   Calendar,
   ArrowRight,
   ShieldCheck,
+  Lock,
   // Bus,
-  // CheckCircle,
-  // Check,
-  // Info,
-  // Download,
 } from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+const checkoutSchema = z.object({
+  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z.email("Invalid email address").min(1, "Email is required"),
+  phone: z.string().min(10, "Phone number must be at least 10 characters"),
+  nextOfKinName: z.string().optional(),
+  nextOfKinRelationship: z.string().optional(),
+  nextOfKinPhone: z.string().optional(),
+  specialRequests: z.string().optional(),
+})
+
+type CheckoutForm = z.infer<typeof checkoutSchema>
 
 export const HireCheckoutPage = () => {
+  const { vehicles, totals, totalDays, origin, destination, start, end } =
+    Route.useSearch()
   const navigate = useNavigate()
-  const handleNavigate = () => {
-    console.log("navigate to confirmation page")
-    navigate({ to: "/hire-confirmation" })
+  const [isPaying, setIsPaying] = useState(false)
+
+  const parsedVehicles = vehicles ? JSON.parse(vehicles) : {}
+  const parsedTotals = totals ? JSON.parse(totals) : {}
+
+  const onSuccess = (formData: CheckoutForm) => {
+    setIsPaying(false)
+    const ref = generateHireBookingRef()
+    saveHireBooking({
+      bookingRef: ref,
+      selectedVehicles: parsedVehicles,
+      totals: parsedTotals,
+      totalDays: totalDays || 1,
+      origin: origin || "",
+      destination: destination || "",
+      startDate: start,
+      endDate: end,
+      fullName: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      nextOfKinName: formData.nextOfKinName,
+      nextOfKinRelationship: formData.nextOfKinRelationship,
+      nextOfKinPhone: formData.nextOfKinPhone,
+      specialRequests: formData.specialRequests,
+      bookedAt: new Date().toISOString(),
+    })
+    navigate({
+      to: "/hire-confirmation",
+      search: {
+        bookingRef: ref,
+        fullName: formData.fullName,
+        vehicles,
+        totals,
+        totalDays,
+        origin,
+        destination,
+        start,
+        end,
+      },
+    })
   }
+
+  const form = useForm({
+    defaultValues: {
+      fullName: "",
+      email: "",
+      phone: "",
+      nextOfKinName: "",
+      nextOfKinRelationship: "",
+      nextOfKinPhone: "",
+      specialRequests: "",
+    },
+    validators: {
+      onChange: checkoutSchema.parse,
+    },
+    onSubmit: async () => {
+      setIsPaying(true)
+      initializePayment()
+    },
+
+    // validatorAdapter: zodValidator(),
+  })
+
+  const { initializePayment } = usePaystack({
+    amount: parsedTotals.subtotal || 0,
+    email: form.state.values.email, // Will be set from form
+    onSuccess: () => onSuccess(form.state.values), // Handled in form submit
+  })
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20">
       <div className="flex flex-col gap-12 lg:flex-row">
-        {/* Left Column (70%) */}
-        <div className="space-y-10 lg:w-[70%]">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
+          }}
+          className="space-y-10 lg:w-[70%]"
+        >
           {/* Trip Summary Section (Read-only) */}
           <section className="rounded-xl bg-surface-container-low p-8">
             <div className="mb-6 flex items-start justify-between">
@@ -42,7 +142,7 @@ export const HireCheckoutPage = () => {
                     Route
                   </p>
                   <p className="text-lg font-semibold text-on-surface">
-                    Terminal Pickup (Kano) → Portharcourt
+                    {origin || "Origin"} → {destination || "Destination"}
                   </p>
                 </div>
               </div>
@@ -55,7 +155,9 @@ export const HireCheckoutPage = () => {
                     Duration
                   </p>
                   <p className="text-lg font-semibold text-on-surface">
-                    Apr 14th - Apr 16th (3 Days Trip)
+                    {start && end
+                      ? `${format(new Date(start), "MMM do")} - ${format(new Date(end), "MMM do")} (${totalDays} Days Trip)`
+                      : `${totalDays || 1} Days Trip`}
                   </p>
                 </div>
               </div>
@@ -67,49 +169,106 @@ export const HireCheckoutPage = () => {
             <h2 className="font-headline text-2xl font-bold tracking-tight">
               Contact Details
             </h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-on-surface-variant">
-                  Full Name
-                </label>
-                <input
-                  className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  placeholder="Enter your full name"
-                  type="text"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-on-surface-variant">
-                  Email Address
-                </label>
-                <input
-                  className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  placeholder="email@example.com"
-                  type="email"
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="block text-sm font-semibold text-on-surface-variant">
-                  Phone Number
-                </label>
-                <div className="relative flex">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                    <img
-                      alt="Nigeria Flag"
-                      className="h-auto w-5 rounded-sm"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWnNt3df90jiRJMgof3Ct0qrV_qL-_KPS8EQsmGE61jEog3uXEfSG-WWdaVwgKx_t8jExnykMu4-US8SFSBtbqkweWtrzxyoJWO_c9wcz_joc-Cohf1jggjBrWlbCciUKeabcIkc_ckD8DUXxrm56ctUXsMPhOW7_96M1frh_Bm7fbMMgZgAOlJ_g73fyoPxKHVdEaL4KgIKWoRalBrVhCDbWRZOKcLM7zNOItLjNbKgMAoPcIn9yaHzUIXujQ3_6uSWQ0UWnhXAnN"
-                    />
-                    <span className="ml-2 font-medium text-on-surface-variant">
-                      +234
-                    </span>
-                  </div>
+            <form.Field
+              name="fullName"
+              validators={{
+                onChange: checkoutSchema.shape.fullName,
+              }}
+              children={(field) => (
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-on-surface-variant">
+                    Full Name
+                  </label>
                   <input
-                    className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 pl-24 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    placeholder="803 000 0000"
-                    type="tel"
+                    className={`w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 ${
+                      field.state.meta.errors.length
+                        ? "border-error focus:border-error focus:ring-error/20"
+                        : ""
+                    }`}
+                    placeholder="Enter your full name"
+                    type="text"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
                   />
+                  {field.state.meta.errors.length > 0 && (
+                    <p className="text-error text-sm">
+                      {field.state.meta.errors.join(",")}
+                    </p>
+                  )}
                 </div>
-              </div>
+              )}
+            />
+            <div className="grid gap-6 md:grid-cols-2">
+              <form.Field
+                name="email"
+                validators={{
+                  onChange: checkoutSchema.shape.email,
+                }}
+                children={(field) => (
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-on-surface-variant">
+                      Email Address
+                    </label>
+                    <input
+                      className={`w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 ${
+                        field.state.meta.errors.length
+                          ? "border-error focus:border-error focus:ring-error/20"
+                          : ""
+                      }`}
+                      placeholder="email@example.com"
+                      type="email"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                    {field.state.meta.errors.length > 0 && (
+                      <p className="text-error text-sm">
+                        {field.state.meta.errors.join(",")}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
+              <form.Field
+                name="phone"
+                validators={{
+                  onChange: checkoutSchema.shape.phone,
+                }}
+                children={(field) => (
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-on-surface-variant">
+                      Phone Number
+                    </label>
+                    <div className="relative flex">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                        <img
+                          alt="Nigeria Flag"
+                          className="h-auto w-5 rounded-sm"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWnNt3df90jiRJMgof3Ct0qrV_qL-_KPS8EQsmGE61jEog3uXEfSG-WWdaVwgKx_t8jExnykMu4-US8SFSBtbqkweWtrzxyoJWO_c9wcz_joc-Cohf1jggjBrWlbCciUKeabcIkc_ckD8DUXxrm56ctUXsMPhOW7_96M1frh_Bm7fbMMgZgAOlJ_g73fyoPxKHVdEaL4KgIKWoRalBrVhCDbWRZOKcLM7zNOItLjNbKgMAoPcIn9yaHzUIXujQ3_6uSWQ0UWnhXAnN"
+                        />
+                        <span className="ml-2 font-medium text-on-surface-variant">
+                          +234
+                        </span>
+                      </div>
+                      <input
+                        className={`w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 pl-24 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 ${
+                          field.state.meta.errors.length
+                            ? "border-error focus:border-error focus:ring-error/20"
+                            : ""
+                        }`}
+                        placeholder="803 000 0000"
+                        type="tel"
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                      />
+                      {field.state.meta.errors.length > 0 && (
+                        <p className="text-error text-sm">
+                          {field.state.meta.errors.join(",")}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              />
             </div>
           </section>
 
@@ -119,35 +278,62 @@ export const HireCheckoutPage = () => {
               Next of Kin
             </h2>
             <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-on-surface-variant">
-                  Kin Name
-                </label>
-                <input
-                  className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  type="text"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-on-surface-variant">
-                  Relationship
-                </label>
-                <select className="w-full appearance-none rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
-                  <option>Spouse</option>
-                  <option>Parent</option>
-                  <option>Sibling</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="block text-sm font-semibold text-on-surface-variant">
-                  Kin Phone Number
-                </label>
-                <input
-                  className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  type="tel"
-                />
-              </div>
+              <form.Field
+                name="nextOfKinName"
+                children={(field) => (
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-on-surface-variant">
+                      Kin Name
+                    </label>
+                    <input
+                      className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      type="text"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </div>
+                )}
+              />
+              <form.Field
+                name="nextOfKinRelationship"
+                children={(field) => (
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-on-surface-variant">
+                      Relationship
+                    </label>
+                    <Select
+                      value={field.state.value}
+                      onValueChange={field.handleChange}
+                    >
+                      <SelectTrigger className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
+                        <SelectValue placeholder="Select relationship" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Spouse">Spouse</SelectItem>
+                        <SelectItem value="Parent">Parent</SelectItem>
+                        <SelectItem value="Sibling">Sibling</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              />
+              <form.Field
+                name="nextOfKinPhone"
+                children={(field) => (
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="block text-sm font-semibold text-on-surface-variant">
+                      Kin Phone Number
+                    </label>
+                    <input
+                      className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      type="tel"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </div>
+                )}
+              />
             </div>
           </section>
 
@@ -156,85 +342,114 @@ export const HireCheckoutPage = () => {
             <h2 className="font-headline text-2xl font-bold tracking-tight">
               Special Requests
             </h2>
-            <textarea
-              className="w-full resize-none rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              placeholder="Any specific requirements for your charter? (e.g., child seats, preferred stopovers, luggage size...)"
-              rows={5}
-            ></textarea>
+            <form.Field
+              name="specialRequests"
+              children={(field) => (
+                <textarea
+                  className="w-full resize-none rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  placeholder="Any specific requirements for your charter? (e.g., child seats, preferred stopovers, luggage size...)"
+                  rows={5}
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                />
+              )}
+            />
           </section>
-        </div>
+        </form>
 
         {/* Right Column (30%) - Sticky Booking Summary */}
         <div className="lg:w-[30%]">
           <div className="sticky top-32 space-y-6">
-            <div className="rounded-xl bg-surface-container-lowest p-6 shadow-sm ring-1 ring-slate-200/50">
+            <div className="rounded-xl bg-surface-container-lowest p-6 shadow-sm ring-1 ring-outline-variant/20">
               <h2 className="mb-6 font-headline text-xl font-bold">
                 Booking Summary
               </h2>
               {/* Vehicle List */}
               <div className="mb-8 space-y-4">
-                <div className="group flex items-center gap-4">
-                  <div className="h-16 w-16 overflow-hidden rounded-lg bg-surface-container">
-                    <img
-                      className="h-full w-full object-cover"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBox9tFULbSchR7l1VTfxRXJYZi-0pWNNnsz_6Ko7XtIAsmdTwhj_IAbRr6X8rO1cIc3hvPzK6x6dLR72m8DOWIqoAaG10U2rWob0ztDxjAHL_5AG8QDwDehmphbkWyi7o2MJNHevXtkZyR9cDvVvYpOQ-y80RFfRvQw_XZGzVtHOuQV_h9ZZENYgseugWtU8aCC848Fn-OZ_8UQJh1d6jXpvgmxg-uTXc9UMxj1fUm3DCF47YywibwVsWDz7Kya6mNGONkLUgUT7vQ"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-on-surface">Toyota Sienna</p>
-                    <p className="text-sm text-outline">Qty: 4</p>
-                  </div>
-                </div>
-                <div className="group flex items-center gap-4">
-                  <div className="h-16 w-16 overflow-hidden rounded-lg bg-surface-container">
-                    <img
-                      className="h-full w-full object-cover"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMyfGhnllqdfw9C76nH2ttpdt3w7COlXQvTnnqYuzBqaPGXok3vL1jN46hI0qGy2CACbwUR89_tF7Czf3JWHU-QzZjQ0xUySZevRKVbFyRWWnlA3Yuulcu-J1TR02RNEIacR5XbzVlIIfjpJy0aVZ2IhtqoeANAwhXlEIIGgApFH_0H8ZczU1eLmHOF-kYhwrIA3-q2wtc_vgJeTlwyB3SA5Mx2Q8AmR3GmKnQRCYzrbEzbsDMsNHRAweVP6O2hypWUW7qV_lGLVb5"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-on-surface">Hyundai H-1</p>
-                    <p className="text-sm text-outline">Qty: 1</p>
-                  </div>
-                </div>
+                {Object.entries(parsedVehicles).map(([id, count]) => {
+                  const vehicle = mockData.charterFleet?.find(
+                    (v) => v.id === id
+                  )
+                  if (!vehicle) return null
+                  return (
+                    <div key={id} className="group flex items-center gap-4">
+                      <div className="h-16 w-16 overflow-hidden rounded-lg bg-surface-container">
+                        <img
+                          className="h-full w-full object-cover"
+                          src={vehicle.imageURL}
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-bold text-on-surface">
+                          {vehicle.model}
+                        </p>
+                        <p className="text-sm text-outline">
+                          Qty: {count as number}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
               {/* Price Breakdown */}
               <div className="space-y-3 border-t border-surface-container-high pt-6 text-sm">
                 <div className="flex justify-between text-outline">
-                  <span>Base Rate (3 Days)</span>
-                  <span>₦1,950,000</span>
+                  <span>Base Rate ({totalDays} Days)</span>
+                  <span>₦{parsedTotals.baseCost?.toLocaleString()}</span>
                 </div>
+                {parsedTotals.residenceSurcharge > 0 && (
+                  <div className="flex justify-between text-outline">
+                    <span>Residence Pickup</span>
+                    <span>
+                      ₦{parsedTotals.residenceSurcharge?.toLocaleString()}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between text-outline">
                   <span>Retain Fee</span>
-                  <span>₦255,000</span>
+                  <span>₦{parsedTotals.retainTotal?.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-outline">
-                  <span>Driver Lodging</span>
-                  <span>₦150,000</span>
-                </div>
+                {parsedTotals.driverAccomodationFee > 0 && (
+                  <div className="flex justify-between text-outline">
+                    <span>Driver Lodging</span>
+                    <span>
+                      ₦{parsedTotals.driverAccomodationFee?.toLocaleString()}
+                    </span>
+                  </div>
+                )}
                 <div className="mt-2 flex items-center justify-between border-t border-surface-container-high pt-4">
                   <span className="font-headline text-lg font-bold text-on-surface">
                     Total
                   </span>
                   <span className="text-2xl font-black tracking-tighter text-primary">
-                    ₦2,355,000
+                    ₦{parsedTotals.subtotal?.toLocaleString()}
                   </span>
                 </div>
               </div>
               {/* CTA */}
               <div className="mt-8 space-y-4">
-                <button
-                  onClick={handleNavigate}
-                  className="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#191c1e] py-5 text-lg font-bold text-white transition-colors hover:bg-black"
-                >
-                  <span>Pay ₦2,355,000 Now</span>
-                  <ArrowRight
-                    className="transition-transform group-hover:translate-x-1"
-                    size={20}
-                  />
-                </button>
+                <form.Subscribe
+                  selector={(state) => [state.canSubmit, state.isSubmitting]}
+                  children={([canSubmit, isSubmitting]) => (
+                    <button
+                      type="submit"
+                      disabled={!canSubmit || isPaying || isSubmitting}
+                      className="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-on-surface py-5 text-lg font-bold text-surface transition-colors hover:bg-on-surface/90 disabled:opacity-50"
+                    >
+                      <Lock size={20} fill="currentColor" />
+                      <span>
+                        {isPaying
+                          ? "Processing..."
+                          : `Pay ₦${parsedTotals.subtotal?.toLocaleString()} Now`}
+                      </span>
+                      <ArrowRight
+                        className="transition-transform group-hover:translate-x-1"
+                        size={20}
+                      />
+                    </button>
+                  )}
+                />
                 <div className="flex flex-col items-center gap-3">
                   <p className="text-[10px] font-bold tracking-widest text-outline uppercase">
                     Secured by
