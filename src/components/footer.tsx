@@ -1,16 +1,22 @@
 import { Send } from "lucide-react"
 
 const Footer = () => (
-  <footer className="relative max-w-full overflow-hidden midnight-panel px-4 py-20 text-white sm:px-6 md:py-28">
+  <footer className="midnight-panel relative max-w-full overflow-hidden px-4 py-20 text-white sm:px-6 md:py-28">
     <div className="mx-auto max-w-7xl">
       <div className="mb-16 grid grid-cols-1 gap-10 md:mb-24 md:gap-12 lg:grid-cols-4">
         <div className="space-y-6">
           <div className="relative">
             <div className="flex items-center gap-3">
-              <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/18 bg-white/10 shadow-[0_0_28px_rgba(255,255,255,0.12)] backdrop-blur-md">
+              {/* <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/18 bg-white/10 shadow-[0_0_28px_rgba(255,255,255,0.12)] backdrop-blur-md">
                 <span className="font-body text-sm font-black tracking-[0.22em] text-white">
                   9JA
                 </span>
+              </div> */}
+              <div className="relative flex size-21 items-center justify-center overflow-hidden rounded-2xl transition-all duration-300">
+                {/* <span className="font-body text-sm font-black tracking-[0.22em] text-white">
+                  9JA
+                </span> */}
+                <img src="/9JA-Express-logo.svg" alt="9JA Express logo" />
               </div>
               <div className="hidden sm:block">
                 <div className="font-body text-sm font-black tracking-[0.28em] text-white uppercase drop-shadow-[0_0_18px_rgba(255,255,255,0.22)]">
@@ -85,15 +91,16 @@ const Footer = () => (
             Join the Journey
           </h5>
           <p className="text-sm text-white/78">
-            Stay connected with route updates, exclusive offers, and travel insights.
+            Stay connected with route updates, exclusive offers, and travel
+            insights.
           </p>
           <div className="flex gap-2">
             <input
               type="email"
               placeholder="Your email address"
-              className="grow rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/50 outline-none backdrop-blur-md focus:border-white/30 focus:ring-2 focus:ring-white/20"
+              className="grow rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white backdrop-blur-md outline-none placeholder:text-white/50 focus:border-white/30 focus:ring-2 focus:ring-white/20"
             />
-            <button className="rounded-xl bg-[color:var(--golden-hour)] p-3 text-[color:var(--deep-midnight)] transition-all hover:bg-[color:var(--golden-hour-soft)] hover:scale-105">
+            <button className="rounded-xl bg-[color:var(--golden-hour)] p-3 text-[color:var(--deep-midnight)] transition-all hover:scale-105 hover:bg-[color:var(--golden-hour-soft)]">
               <Send size={18} />
             </button>
           </div>
