@@ -154,7 +154,7 @@ const SearchWidget = ({ heroMode = false }: SearchWidgetProps) => {
         damping: heroMode ? 18 : undefined,
       }}
       className={cn(
-        "relative mx-auto max-w-6xl max-w-full px-4 sm:px-6"
+        "relative mx-auto w-full max-w-5xl px-4 sm:px-6"
         // heroMode ? "z-40 will-change-transform" : "z-30",
         // heroMode ? "" : "-mt-20 md:-mt-32"
       )}
