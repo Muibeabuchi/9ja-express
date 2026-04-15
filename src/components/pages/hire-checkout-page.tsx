@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "@tanstack/react-form"
 import { z } from "zod"
 import { useNavigate } from "@tanstack/react-router"
@@ -25,15 +25,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Button } from "../ui/button"
 
 const checkoutSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
-  email: z.email("Invalid email address").min(1, "Email is required"),
+  email: z.string().email("Invalid email address").min(1, "Email is required"),
   phone: z.string().min(10, "Phone number must be at least 10 characters"),
-  nextOfKinName: z.string().optional(),
-  nextOfKinRelationship: z.string().optional(),
-  nextOfKinPhone: z.string().optional(),
-  specialRequests: z.string().optional(),
+  nextOfKinName: z.string().max(20),
+  nextOfKinRelationship: z.string(),
+  nextOfKinPhone: z
+    .string()
+    .min(10, "Phone number must be at least 10 numbers"),
+  specialRequests: z
+    .string()
+    .max(60, "special request length cannot exceed 60 characters"),
 })
 
 type CheckoutForm = z.infer<typeof checkoutSchema>
@@ -61,15 +66,16 @@ export const HireCheckoutPage = () => {
       endDate: end,
       fullName: formData.fullName,
       email: formData.email,
-      phone: formData.phone,
+      phone: Number(formData.phone),
       nextOfKinName: formData.nextOfKinName,
       nextOfKinRelationship: formData.nextOfKinRelationship,
-      nextOfKinPhone: formData.nextOfKinPhone,
+      nextOfKinPhone: Number(formData.nextOfKinPhone),
       specialRequests: formData.specialRequests,
       bookedAt: new Date().toISOString(),
     })
     navigate({
       to: "/hire-confirmation",
+      replace: true,
       search: {
         bookingRef: ref,
         fullName: formData.fullName,
@@ -95,20 +101,30 @@ export const HireCheckoutPage = () => {
       specialRequests: "",
     },
     validators: {
-      onChange: checkoutSchema.parse,
+      onChange: checkoutSchema,
+      // onSubmit: checkoutSchema,
     },
-    onSubmit: async () => {
+    onSubmit: async ({ value }) => {
+      console.log("payment processing")
+      // console.log();
       setIsPaying(true)
+      console.log("email", value.email)
       initializePayment()
     },
 
     // validatorAdapter: zodValidator(),
   })
 
+  useEffect(() => {
+    console.log(form.state.errors)
+  })
+  // console.log(form.)
+
   const { initializePayment } = usePaystack({
     amount: parsedTotals.subtotal || 0,
-    email: form.state.values.email, // Will be set from form
+    email: form.getFieldValue("email"), // Will be set from form
     onSuccess: () => onSuccess(form.state.values), // Handled in form submit
+    onError: () => setIsPaying(false),
   })
 
   return (
@@ -120,6 +136,7 @@ export const HireCheckoutPage = () => {
             e.stopPropagation()
             form.handleSubmit()
           }}
+          id="hire-checkout-form"
           className="space-y-10 lg:w-[70%]"
         >
           {/* Trip Summary Section (Read-only) */}
@@ -128,7 +145,10 @@ export const HireCheckoutPage = () => {
               <h2 className="font-headline text-2xl font-bold tracking-tight text-on-surface-variant">
                 Trip Summary
               </h2>
-              <button className="text-sm font-semibold text-primary hover:underline">
+              <button
+                type="button"
+                className="text-sm font-semibold text-primary hover:underline"
+              >
                 Edit Logistics
               </button>
             </div>
@@ -171,9 +191,6 @@ export const HireCheckoutPage = () => {
             </h2>
             <form.Field
               name="fullName"
-              validators={{
-                onChange: checkoutSchema.shape.fullName,
-              }}
               children={(field) => (
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-on-surface-variant">
@@ -190,9 +207,11 @@ export const HireCheckoutPage = () => {
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
                   />
-                  {field.state.meta.errors.length > 0 && (
+                  {!field.state.meta.isValid && (
                     <p className="text-error text-sm">
-                      {field.state.meta.errors.join(",")}
+                      {field.state.meta.errors
+                        .map((error) => error?.message)
+                        .join(", ")}
                     </p>
                   )}
                 </div>
@@ -201,32 +220,36 @@ export const HireCheckoutPage = () => {
             <div className="grid gap-6 md:grid-cols-2">
               <form.Field
                 name="email"
-                validators={{
-                  onChange: checkoutSchema.shape.email,
+                children={(field) => {
+                  console.log("email-error", field.state.meta.errors)
+                  return (
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-on-surface-variant">
+                        Email Address
+                      </label>
+                      <div className="flex flex-col items-center">
+                        <input
+                          className={`w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 ${
+                            field.state.meta.errors.length
+                              ? "border-error focus:border-error focus:ring-error/20"
+                              : ""
+                          }`}
+                          placeholder="email@example.com"
+                          type="email"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                        />
+                        {!field.state.meta.isValid && (
+                          <p className="text-error text-sm">
+                            {field.state.meta.errors
+                              .map((error) => error?.message)
+                              .join(", ")}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )
                 }}
-                children={(field) => (
-                  <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-on-surface-variant">
-                      Email Address
-                    </label>
-                    <input
-                      className={`w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 ${
-                        field.state.meta.errors.length
-                          ? "border-error focus:border-error focus:ring-error/20"
-                          : ""
-                      }`}
-                      placeholder="email@example.com"
-                      type="email"
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <p className="text-error text-sm">
-                        {field.state.meta.errors.join(",")}
-                      </p>
-                    )}
-                  </div>
-                )}
               />
               <form.Field
                 name="phone"
@@ -249,9 +272,10 @@ export const HireCheckoutPage = () => {
                           +234
                         </span>
                       </div>
+                      {/* <div className="flex flex-col items-center"> */}
                       <input
                         className={`w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 pl-24 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 ${
-                          field.state.meta.errors.length
+                          !field.state.meta.isValid
                             ? "border-error focus:border-error focus:ring-error/20"
                             : ""
                         }`}
@@ -260,12 +284,15 @@ export const HireCheckoutPage = () => {
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
                       />
-                      {field.state.meta.errors.length > 0 && (
-                        <p className="text-error text-sm">
-                          {field.state.meta.errors.join(",")}
-                        </p>
-                      )}
+                      {/* </div> */}
                     </div>
+                    {!field.state.meta.isValid && (
+                      <p className="text-error text-sm">
+                        {field.state.meta.errors
+                          .map((error) => error?.message)
+                          .join(", ")}
+                      </p>
+                    )}
                   </div>
                 )}
               />
@@ -305,8 +332,11 @@ export const HireCheckoutPage = () => {
                       value={field.state.value}
                       onValueChange={field.handleChange}
                     >
-                      <SelectTrigger className="w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
-                        <SelectValue placeholder="Select relationship" />
+                      <SelectTrigger className="w-full! rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-4 transition-all outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
+                        <SelectValue
+                          placeholder="Select relationship "
+                          className="my-0!"
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Spouse">Spouse</SelectItem>
@@ -430,25 +460,51 @@ export const HireCheckoutPage = () => {
               {/* CTA */}
               <div className="mt-8 space-y-4">
                 <form.Subscribe
-                  selector={(state) => [state.canSubmit, state.isSubmitting]}
-                  children={([canSubmit, isSubmitting]) => (
-                    <button
-                      type="submit"
-                      disabled={!canSubmit || isPaying || isSubmitting}
-                      className="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-on-surface py-5 text-lg font-bold text-surface transition-colors hover:bg-on-surface/90 disabled:opacity-50"
-                    >
-                      <Lock size={20} fill="currentColor" />
-                      <span>
-                        {isPaying
-                          ? "Processing..."
-                          : `Pay ₦${parsedTotals.subtotal?.toLocaleString()} Now`}
-                      </span>
-                      <ArrowRight
-                        className="transition-transform group-hover:translate-x-1"
-                        size={20}
-                      />
-                    </button>
-                  )}
+                  selector={(state) => [
+                    state.canSubmit,
+                    state.isSubmitting,
+                    state.isValid,
+                    state.isFormValid,
+                  ]}
+                  children={([
+                    canSubmit,
+                    // isSubmitting,
+                    // isValid,
+                    // isFormValid,
+                  ]) => {
+                    console.log("canSubmit", canSubmit)
+                    // console.log("isFormValid", isFormValid)
+                    // console.log("isSubmitting", isSubmitting)
+                    // console.log("isValid", isValid)
+                    return (
+                      <Button
+                        type="submit"
+                        disabled={
+                          // isFormValid
+                          !canSubmit
+                          // ||
+                          // !isValid
+                          //  ||
+                          // isPaying
+                          //  ||
+                          // isSubmitting
+                        }
+                        form="hire-checkout-form"
+                        className="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-on-surface py-5 text-lg font-bold text-surface transition-colors hover:bg-on-surface/90 disabled:cursor-none disabled:opacity-50"
+                      >
+                        <Lock size={20} fill="currentColor" />
+                        <span>
+                          {isPaying
+                            ? "Processing..."
+                            : `Pay ₦${parsedTotals.subtotal?.toLocaleString()} Now`}
+                        </span>
+                        <ArrowRight
+                          className="transition-transform group-hover:translate-x-1"
+                          size={20}
+                        />
+                      </Button>
+                    )
+                  }}
                 />
                 <div className="flex flex-col items-center gap-3">
                   <p className="text-[10px] font-bold tracking-widest text-outline uppercase">

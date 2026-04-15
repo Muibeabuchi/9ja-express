@@ -29,6 +29,11 @@ export function isValidBookingRef(ref: string): boolean {
   return /^PMT-[A-Z0-9]{8}$/.test(ref)
 }
 
+/** Validates that a hire reference matches the expected format */
+export function isValidHireRef(ref: string): boolean {
+  return /^CHT-[A-Za-z0-9]{8}$/.test(ref)
+}
+
 /** Returns all bookings stored in localStorage */
 export function getAllBookings(): StoredBooking[] {
   try {

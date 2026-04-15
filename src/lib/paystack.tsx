@@ -5,10 +5,12 @@ const usePaystack = ({
   amount,
   email,
   onSuccess,
+  onError,
 }: {
   amount: number
   email: string
   onSuccess: () => void
+  onError?: () => void
 }) => {
   const config = {
     reference: new Date().getTime().toString(),
@@ -19,6 +21,7 @@ const usePaystack = ({
 
   const onClose = () => {
     toast.error("Payment cancelled")
+    onError?.()
   }
 
   const initializePayment = usePaystackPayment(config)

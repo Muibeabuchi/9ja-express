@@ -22,10 +22,10 @@ export interface StoredHireBooking {
   endDate?: string
   fullName: string
   email: string
-  phone: string
+  phone: number
   nextOfKinName?: string
   nextOfKinRelationship?: string
-  nextOfKinPhone?: string
+  nextOfKinPhone?: number
   specialRequests?: string
   bookedAt: string // ISO timestamp
 }

@@ -11,6 +11,7 @@ import {
   ShieldCheck,
 } from "lucide-react"
 import { format } from "date-fns"
+// import { Button } from "../ui/button"
 
 export const HireConfirmationPage = () => {
   const {
@@ -184,7 +185,8 @@ export const HireConfirmationPage = () => {
         <footer className="grid grid-cols-1 gap-4 p-10 pt-0 md:grid-cols-2">
           <button
             onClick={handleNavigate}
-            className="bg-inverse-surface order-1 flex items-center justify-center gap-2 rounded-xl px-8 py-4 font-bold tracking-tight text-surface transition-opacity hover:opacity-90 md:order-2"
+            className="order-1 flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 font-bold tracking-tight text-surface transition-opacity hover:opacity-90 md:order-2"
+            // className="flex items-center justify-center gap-2 rounded-xl px-8 py-4 font-bold tracking-tight text-surface transition-opacity hover:opacity-90 md:order-2"
           >
             Go to Dashboard
             <ArrowRight size={20} />

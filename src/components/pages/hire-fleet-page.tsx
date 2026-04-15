@@ -5,7 +5,6 @@ import { differenceInDays, format } from "date-fns"
 import {
   //  Route,
   ArrowRight,
-  Sheet,
 } from "lucide-react"
 import { useState, useMemo } from "react"
 import FleetCatalog from "../hire-fleet/fleet-catalog"
@@ -13,7 +12,7 @@ import HireFleetSummaryButton from "../hire-fleet/hire-fleet-summary-button"
 import HireFleetSummaryContent from "../hire-fleet/hire-fleet-summary-content"
 import { MobileDrawer } from "../mobile-drawer"
 import { DrawerTitle } from "../ui/drawer"
-import { SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet"
 import { data as mockData } from "@/data/mockData"
 
 export function HireFleetPage() {

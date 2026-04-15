@@ -1,8 +1,8 @@
 import { StrictMode } from "react"
 import ReactDOM from "react-dom/client"
 import { TanStackDevtools } from "@tanstack/react-devtools"
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
-import { FormDevtoolsPanel } from "@tanstack/react-form-devtools"
+// import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
+import { formDevtoolsPlugin } from "@tanstack/react-form-devtools"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
 
 // Import the generated route tree
@@ -33,17 +33,19 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <RouterProvider router={router} />
+
       <TanStackDevtools
-        config={{ position: "bottom-left" }}
+        config={{ position: "bottom-left", hideUntilHover: true }}
         plugins={[
-          {
-            name: "Tantack Router",
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-          {
-            name: "Tantack Form",
-            render: <FormDevtoolsPanel />,
-          },
+          formDevtoolsPlugin(),
+          // {
+          //   name: "Tantack Router",
+          //   render: <TanStackRouterDevtools />,
+          // },
+          // {
+          //   name: "Tantack Form",
+          //   render: <FormDevtoolsPanel />,
+          // },
         ]}
       />
     </StrictMode>
