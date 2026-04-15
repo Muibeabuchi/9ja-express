@@ -1,21 +1,106 @@
-import { Check, ChevronDown, Star, Bus, Info } from "lucide-react"
+import { ChevronDown, Star, Bus, Info } from "lucide-react"
 import { motion } from "motion/react"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { data as mockData } from "../../data/mockData"
 import { Route } from "@/routes/search-results"
+import { Slider } from "@/components/ui/slider"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Label } from "@/components/ui/label"
+
+const BUS_TYPES = ["Executive Coach", "Smart Coach", "Blazer"]
+const DEPARTURE_TIME_PERIODS = [
+  { id: "early-morning", label: "Early Morning", start: 5, end: 12 },
+  { id: "afternoon", label: "Afternoon", start: 12, end: 17 },
+  { id: "night", label: "Night", start: 17, end: 5 },
+]
+const SORT_OPTIONS = [
+  { id: "earliest", label: "Earliest First" },
+  { id: "price-asc", label: "Price: Lowest to Highest" },
+  { id: "price-desc", label: "Price: Highest to Lowest" },
+]
+
+const getTimePeriod = (time: string): string => {
+  const hour = parseInt(time.split(":")[0], 10)
+  if (hour >= 5 && hour < 12) return "early-morning"
+  if (hour >= 12 && hour < 17) return "afternoon"
+  return "night"
+}
 
 const SearchResultsPage = () => {
   const { from, to, departureDate } = Route.useSearch()
   const navigate = useNavigate()
 
-  const filteredBuses = useMemo(
-    () =>
-      mockData.buses.filter(
-        (bus) => (!from || bus.from === from) && (!to || bus.to === to)
-      ),
-    [from, to]
-  )
+  const [selectedBusTypes, setSelectedBusTypes] = useState<string[]>([])
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 150000])
+  const [selectedDepartureTimes, setSelectedDepartureTimes] = useState<string[]>([])
+  const [sortOption, setSortOption] = useState("earliest")
+
+  const priceBounds = useMemo(() => {
+    const filtered = mockData.buses.filter(
+      (bus) => (!from || bus.from === from) && (!to || bus.to === to)
+    )
+    if (filtered.length === 0) return { min: 0, max: 150000 }
+    const prices = filtered.map((b) => b.price)
+    return { min: Math.min(...prices), max: Math.max(...prices) }
+  }, [from, to])
+
+  const filteredBuses = useMemo(() => {
+    let result = mockData.buses.filter(
+      (bus) => (!from || bus.from === from) && (!to || bus.to === to)
+    )
+
+    if (selectedBusTypes.length > 0) {
+      result = result.filter((bus) => selectedBusTypes.includes(bus.type))
+    }
+
+    result = result.filter(
+      (bus) => bus.price >= priceRange[0] && bus.price <= priceRange[1]
+    )
+
+    if (selectedDepartureTimes.length > 0) {
+      result = result.filter((bus) =>
+        selectedDepartureTimes.includes(getTimePeriod(bus.departureTime))
+      )
+    }
+
+    const sorted = [...result]
+    switch (sortOption) {
+      case "earliest":
+        sorted.sort((a, b) => a.departureTime.localeCompare(b.departureTime))
+        break
+      case "price-asc":
+        sorted.sort((a, b) => a.price - b.price)
+        break
+      case "price-desc":
+        sorted.sort((a, b) => b.price - a.price)
+        break
+    }
+
+    return sorted
+  }, [from, to, selectedBusTypes, priceRange, selectedDepartureTimes, sortOption])
+
+  const toggleBusType = (type: string) => {
+    setSelectedBusTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    )
+  }
+
+  const toggleDepartureTime = (period: string) => {
+    setSelectedDepartureTimes((prev) =>
+      prev.includes(period) ? prev.filter((t) => t !== period) : [...prev, period]
+    )
+  }
+
+  const currentSortLabel = SORT_OPTIONS.find((o) => o.id === sortOption)?.label || "Sort"
 
   const handleSelectBus = (busId: string) => {
     navigate({
@@ -38,15 +123,19 @@ const SearchResultsPage = () => {
                     Bus Type
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    <button className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-on-primary">
-                      AC
-                    </button>
-                    <button className="hover:bg-surface-variant rounded-full bg-surface-container-highest px-4 py-2 text-xs font-bold text-on-surface-variant transition-colors">
-                      Non-AC
-                    </button>
-                    <button className="hover:bg-surface-variant rounded-full bg-surface-container-highest px-4 py-2 text-xs font-bold text-on-surface-variant transition-colors">
-                      Sleeper
-                    </button>
+                    {BUS_TYPES.map((type) => (
+                      <button
+                        key={type}
+                        onClick={() => toggleBusType(type)}
+                        className={`rounded-full px-4 py-2 text-xs font-bold transition-colors ${
+                          selectedBusTypes.includes(type)
+                            ? "bg-primary text-on-primary"
+                            : "bg-surface-container-highest text-on-surface-variant hover:bg-surface-variant"
+                        }`}
+                      >
+                        {type}
+                      </button>
+                    ))}
                   </div>
                 </section>
 
@@ -56,12 +145,16 @@ const SearchResultsPage = () => {
                       Price Range
                     </label>
                     <span className="text-xs font-bold text-primary">
-                      ₦5k - ₦50k
+                      ₦{priceRange[0].toLocaleString()} - ₦{priceRange[1].toLocaleString()}
                     </span>
                   </div>
-                  <input
-                    type="range"
-                    className="h-1 w-full cursor-pointer appearance-none rounded-lg bg-outline-variant accent-primary"
+                  <Slider
+                    value={priceRange}
+                    onValueChange={(value) => setPriceRange(value as [number, number])}
+                    min={priceBounds.min}
+                    max={priceBounds.max}
+                    step={1000}
+                    className="py-2"
                   />
                 </section>
 
@@ -70,21 +163,20 @@ const SearchResultsPage = () => {
                     Departure Time
                   </label>
                   <div className="space-y-3 md:space-y-4">
-                    {["Early Morning", "Afternoon", "Night"].map((time) => (
-                      <label
-                        key={time}
-                        className="group flex cursor-pointer items-center gap-3"
-                      >
-                        <div className="flex h-5 w-5 items-center justify-center rounded border border-outline-variant transition-colors group-hover:border-primary">
-                          <Check
-                            size={14}
-                            className="hidden text-primary group-hover:block"
-                          />
-                        </div>
-                        <span className="text-sm font-medium text-on-surface-variant">
-                          {time}
-                        </span>
-                      </label>
+                    {DEPARTURE_TIME_PERIODS.map((period) => (
+                      <div key={period.id} className="flex items-center gap-3">
+                        <Checkbox
+                          id={period.id}
+                          checked={selectedDepartureTimes.includes(period.id)}
+                          onCheckedChange={() => toggleDepartureTime(period.id)}
+                        />
+                        <Label
+                          htmlFor={period.id}
+                          className="cursor-pointer text-sm font-medium text-on-surface-variant"
+                        >
+                          {period.label}
+                        </Label>
+                      </div>
                     ))}
                   </div>
                 </section>
@@ -109,9 +201,22 @@ const SearchResultsPage = () => {
               <span className="text-[10px] font-bold tracking-wider text-outline uppercase">
                 Sort by:
               </span>
-              <div className="flex cursor-pointer items-center gap-2 text-xs font-bold text-primary md:text-sm">
-                Earliest First <ChevronDown size={16} />
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center gap-2 text-xs font-bold text-primary md:text-sm">
+                    {currentSortLabel} <ChevronDown size={16} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuRadioGroup value={sortOption} onValueChange={setSortOption}>
+                    {SORT_OPTIONS.map((option) => (
+                      <DropdownMenuRadioItem key={option.id} value={option.id}>
+                        {option.label}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
