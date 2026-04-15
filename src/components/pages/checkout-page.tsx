@@ -360,27 +360,6 @@ const CheckoutPage = () => {
                 Apply
               </button>
             </div>
-            {/* Trust Badge */}
-            <div className="flex items-center justify-center gap-4 opacity-40 grayscale md:gap-6">
-              <img
-                alt="Visa"
-                className="h-3 object-contain md:h-4"
-                referrerPolicy="no-referrer"
-                src="https://picsum.photos/seed/visa/100/40"
-              />
-              <img
-                alt="Mastercard"
-                className="h-5 object-contain md:h-6"
-                referrerPolicy="no-referrer"
-                src="https://picsum.photos/seed/mastercard/100/40"
-              />
-              <img
-                alt="Paystack"
-                className="h-3 object-contain md:h-4"
-                referrerPolicy="no-referrer"
-                src="https://picsum.photos/seed/paystack/100/40"
-              />
-            </div>
           </div>
         </aside>
       </div>

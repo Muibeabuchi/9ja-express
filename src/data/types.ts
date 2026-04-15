@@ -1,16 +1,24 @@
 // types.ts
 
 export type Location =
-  | "Lagos"
-  | "Abuja"
-  | "Enugu"
-  | "Owerri"
-  | "Port Harcourt"
-  | "Kano"
-  | "Ibadan"
-  | "Benin City"
-  | "Kaduna"
-  | "Jos"
+  | "Lagos (Jibowu)"
+  | "Lagos (Ajah)"
+  | "Abuja (Utako)"
+  | "Abuja (Gwagwalada)"
+  | "Enugu (Okpara Ave)"
+  | "Owerri (Main)"
+  | "Port Harcourt (ABA Road)"
+  | "Onitsha (Main)"
+  | "Aba (P.H Road)"
+  | "Uyo (Itam)"
+  | "Calabar (Main)"
+  | "Benin City (Central)"
+  | "Warri (Effurun)"
+  | "Ibadan (Iwo Road)"
+  | "Kano (Central)"
+  | "Jos (Main)"
+  | "Kaduna (Mando)"
+  | "Akure (Main)"
 
 export type BusType = "Executive Coach" | "Smart Coach" | "Blazer"
 
@@ -20,7 +28,7 @@ export type Bus = {
   type: BusType
   totalSeats: number
   price: number
-  departureTime: string // could be refined later
+  departureTime: string
   arrivalTime: string
   from: Location
   to: Location
@@ -40,7 +48,7 @@ export type Booking = {
   busId: string
   seat: string
   passengerName: string
-  date: string // could be Date if parsed
+  date: string
   amount: number
   paymentMethod: PaymentMethod
 }

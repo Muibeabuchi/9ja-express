@@ -1,9 +1,10 @@
 import { Send } from "lucide-react"
+import { Logo } from "./logo"
 
 const Footer = () => (
-  <footer className="midnight-panel relative max-w-full overflow-hidden px-4 py-20 text-white sm:px-6 md:py-28">
+  <footer className="midnight-panel relative max-w-full overflow-hidden px-4 py-10 text-white sm:px-6 md:py-14">
     <div className="mx-auto max-w-7xl">
-      <div className="mb-16 grid grid-cols-1 gap-10 md:mb-24 md:gap-12 lg:grid-cols-4">
+      <div className="mb-6 grid grid-cols-1 gap-10 md:mb-12 md:gap-12 lg:grid-cols-4">
         <div className="space-y-6">
           <div className="relative">
             <div className="flex items-center gap-3">
@@ -12,12 +13,7 @@ const Footer = () => (
                   9JA
                 </span>
               </div> */}
-              <div className="relative flex size-21 items-center justify-center overflow-hidden rounded-2xl transition-all duration-300">
-                {/* <span className="font-body text-sm font-black tracking-[0.22em] text-white">
-                  9JA
-                </span> */}
-                <img src="/9JA-Express-logo.svg" alt="9JA Express logo" />
-              </div>
+              <Logo />
               <div className="hidden sm:block">
                 <div className="font-body text-sm font-black tracking-[0.28em] text-white uppercase drop-shadow-[0_0_18px_rgba(255,255,255,0.22)]">
                   9JA Express
@@ -107,7 +103,7 @@ const Footer = () => (
         </div>
       </div>
 
-      <div className="flex flex-col items-center justify-between gap-6 border-t border-white/10 pt-8 md:flex-row md:pt-12">
+      <div className="flex flex-col items-center justify-between gap-6 border-t border-white/10 pt-2 md:flex-row md:pt-6">
         <p className="text-center text-xs text-white/60 md:text-left md:text-sm">
           © 2026 9JA Express. All rights reserved.
         </p>

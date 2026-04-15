@@ -451,11 +451,11 @@ const SeatSelectionPage = () => {
               </div>
 
               <div className="rounded-xl bg-surface-container-low p-4 md:p-6">
-                <div className="flex items-end justify-between">
-                  <span className="text-[10px] font-bold tracking-wider text-outline uppercase">
+                <div className="flex items-center justify-between">
+                  <span className="text-[8px] font-bold tracking-wider text-outline uppercase">
                     Total Price
                   </span>
-                  <span className="font-headline text-2xl font-black text-primary md:text-3xl">
+                  <span className="font-headline text-2xl font-black text-primary md:text-lg">
                     ₦{totalPrice.toLocaleString()}
                   </span>
                 </div>

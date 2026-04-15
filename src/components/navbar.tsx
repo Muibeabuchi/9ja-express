@@ -3,6 +3,7 @@ import { Bell, Menu, User } from "lucide-react"
 import { motion } from "motion/react"
 
 import { cn } from "@/lib/utils"
+import { Logo } from "./logo"
 
 const navLinks = [
   { label: "Trips", to: "/" },
@@ -33,12 +34,7 @@ const Navbar = () => {
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 md:h-20">
           <div className="flex w-full items-center justify-between gap-6 md:gap-12">
             <Link to="/" className="group flex items-center gap-3">
-              <div className="relative flex size-21 items-center justify-center overflow-hidden rounded-2xl transition-all duration-300">
-                {/* <span className="font-body text-sm font-black tracking-[0.22em] text-white">
-                  9JA
-                </span> */}
-                <img src="/9JA-Express-logo.svg" alt="9JA Express logo" />
-              </div>
+              <Logo />
               <div className="hidden sm:block">
                 <div className="font-body text-sm font-black tracking-[0.28em] text-white uppercase drop-shadow-[0_0_18px_rgba(255,255,255,0.22)]">
                   9JA Express
