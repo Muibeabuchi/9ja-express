@@ -1,3 +1,4 @@
+import { toast } from "sonner"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
@@ -87,6 +88,8 @@ export const useAuthStore = create<AuthState>()(
           }
           setSession(user)
           set({ user })
+          toast.success("Successfully Logged In")
+
           return true
         }
         return false
@@ -116,6 +119,7 @@ export const useAuthStore = create<AuthState>()(
         }
         setSession(user)
         set({ user })
+        toast.success("Successfully Created your Account")
         return true
       },
 
