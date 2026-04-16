@@ -2,7 +2,6 @@ import { Link, useRouter } from "@tanstack/react-router"
 import { Home, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "motion/react"
-import { Logo } from "../logo"
 
 const NotFoundPage = () => {
   const router = useRouter()
