@@ -1,5 +1,13 @@
-import { Link, useNavigate } from "@tanstack/react-router"
-import { Bell, Menu, User, LogOut, Ticket } from "lucide-react"
+import { Link, useRouter } from "@tanstack/react-router"
+import {
+  Bell,
+  Menu,
+  User,
+  LogOut,
+  // Ticket,
+  // History,
+  MapPinHouseIcon,
+} from "lucide-react"
 import { motion } from "motion/react"
 
 import { cn } from "@/lib/utils"
@@ -13,19 +21,11 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
 import { useAuthStore } from "@/stores/auth-store"
-import { useRouter } from "@tanstack/react-router"
-
-// const navLinks = [
-//   // { label: "Trips", to: "/" },Q
-//   // { label: "Manage Booking", to: "/manage-booking" },
-//   // { label: "Offers", to: "/" },
-//   // { label: "Support", to: "/" },
-// ]
 
 const Navbar = () => {
   const { user, logout } = useAuthStore()
   const router = useRouter()
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const userInitials = user?.name
     ?.split(" ")
     .map((n) => n[0])
@@ -117,12 +117,14 @@ const Navbar = () => {
                       </div>
                     </div>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => navigate({ to: "/my-bookings" })}
-                    >
-                      <Ticket className="mr-2 h-4 w-4" />
-                      My Bookings
-                    </DropdownMenuItem>
+                    <Link to="/my-bookings">
+                      <DropdownMenuItem
+                      // onClick={() => navigate({ to: "/my-bookings" })}
+                      >
+                        <MapPinHouseIcon className="mr-2 h-4 w-4" />
+                        My Bookings
+                      </DropdownMenuItem>
+                    </Link>
                     <DropdownMenuItem
                       onClick={handleLogout}
                       className="text-destructive focus:text-destructive"

@@ -1,11 +1,11 @@
 import { Clock3, ShieldCheck, Star } from "lucide-react"
 import { motion } from "motion/react"
 
-import { FeaturesGrid } from "./home/features-grid"
-import { FleetPreview } from "./home/fleet-preview"
-import { PopularRoutes } from "./home/popular-routes"
-import { ProcessFlow } from "./home/process-flow"
-import SearchWidget from "../search-widget"
+import { FeaturesGrid } from "./features-grid"
+import { FleetPreview } from "./fleet-preview"
+import { PopularRoutes } from "./popular-routes"
+import { ProcessFlow } from "./process-flow"
+import SearchWidget from "../../search-widget"
 
 const heroStats = [
   "Daily departures across major Nigerian routes",
