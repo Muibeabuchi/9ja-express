@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Button } from "../ui/button"
+import { useAuthStore } from "@/stores/auth-store"
 
 const checkoutSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
@@ -44,6 +45,7 @@ const checkoutSchema = z.object({
 type CheckoutForm = z.infer<typeof checkoutSchema>
 
 export const HireCheckoutPage = () => {
+  const { user } = useAuthStore()
   const { vehicles, totals, totalDays, origin, destination, start, end } =
     Route.useSearch()
   const navigate = useNavigate()
@@ -92,8 +94,8 @@ export const HireCheckoutPage = () => {
 
   const form = useForm({
     defaultValues: {
-      fullName: "",
-      email: "",
+      fullName: user?.name || "",
+      email: user?.email || "",
       phone: "",
       nextOfKinName: "",
       nextOfKinRelationship: "",

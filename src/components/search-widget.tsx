@@ -448,17 +448,19 @@ const SearchWidget = ({ heroMode = false }: SearchWidgetProps) => {
                         className="w-56 rounded-2xl p-2"
                         align="start"
                       >
-                        {mockData.locations.map((loc) => (
-                          <DropdownMenuItem
-                            key={loc}
-                            onClick={() =>
-                              setSearchParams({ ...searchParams, from: loc })
-                            }
-                            className="cursor-pointer rounded-xl px-4 py-3 text-sm font-semibold"
-                          >
-                            {loc}
-                          </DropdownMenuItem>
-                        ))}
+                        {mockData.locations
+                          .filter((loc) => loc !== searchParams.to)
+                          .map((loc) => (
+                            <DropdownMenuItem
+                              key={loc}
+                              onClick={() =>
+                                setSearchParams({ ...searchParams, from: loc })
+                              }
+                              className="cursor-pointer rounded-xl px-4 py-3 text-sm font-semibold"
+                            >
+                              {loc}
+                            </DropdownMenuItem>
+                          ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   )}
@@ -469,7 +471,8 @@ const SearchWidget = ({ heroMode = false }: SearchWidgetProps) => {
                       className={cn(
                         heroMode
                           ? cn(heroFieldClassName, "md:rounded-none")
-                          : "group flex w-full flex-1 flex-col justify-center overflow-hidden rounded-2xl px-5 py-4 text-left transition-colors focus-within:bg-surface-container-low hover:bg-surface-container-low/50 md:rounded-none md:py-3"
+                          : "group flex w-full flex-1 flex-col justify-center overflow-hidden rounded-2xl px-5 py-4 text-left transition-colors focus-within:bg-surface-container-low hover:bg-surface-container-low/50 md:rounded-none md:py-3",
+                        !searchParams.from && "cursor-not-allowed opacity-50"
                       )}
                     >
                       <div
@@ -491,7 +494,11 @@ const SearchWidget = ({ heroMode = false }: SearchWidgetProps) => {
                       </div>
                       <input
                         type="text"
-                        placeholder="Enter drop-off address"
+                        placeholder={
+                          !searchParams.from
+                            ? "Select pickup first"
+                            : "Enter drop-off address"
+                        }
                         value={searchParams.to}
                         onChange={(e) =>
                           setSearchParams({
@@ -499,11 +506,13 @@ const SearchWidget = ({ heroMode = false }: SearchWidgetProps) => {
                             to: e.target.value,
                           })
                         }
+                        disabled={!searchParams.from}
                         className={cn(
                           "w-full truncate border-none bg-transparent p-0 ring-0 outline-none focus:ring-0",
                           heroMode
                             ? "text-base font-bold text-white placeholder:font-normal placeholder:text-white/34 md:text-lg"
-                            : "text-base font-bold placeholder:font-normal placeholder:text-outline/40 md:text-lg"
+                            : "text-base font-bold placeholder:font-normal placeholder:text-outline/40 md:text-lg",
+                          !searchParams.from && "pointer-events-none"
                         )}
                       />
                     </div>
@@ -511,10 +520,13 @@ const SearchWidget = ({ heroMode = false }: SearchWidgetProps) => {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button
+                          disabled={!searchParams.from}
                           className={cn(
                             heroMode
                               ? cn(heroFieldClassName, "md:rounded-none")
-                              : "group flex w-full flex-1 flex-col justify-center overflow-hidden rounded-2xl px-5 py-4 text-left transition-colors outline-none hover:bg-surface-container-low/50 focus:bg-surface-container-low md:rounded-none md:py-3"
+                              : "group flex w-full flex-1 flex-col justify-center overflow-hidden rounded-2xl px-5 py-4 text-left transition-colors outline-none hover:bg-surface-container-low/50 focus:bg-surface-container-low md:rounded-none md:py-3",
+                            !searchParams.from &&
+                              "cursor-not-allowed opacity-50"
                           )}
                         >
                           <div
@@ -548,7 +560,9 @@ const SearchWidget = ({ heroMode = false }: SearchWidgetProps) => {
                                     : "font-normal text-outline/60")
                               )}
                             >
-                              {searchParams.to || "Going to"}
+                              {!searchParams.from
+                                ? "Select departure first"
+                                : searchParams.to || "Going to"}
                             </span>
                             <ChevronDown
                               size={16}
@@ -563,17 +577,19 @@ const SearchWidget = ({ heroMode = false }: SearchWidgetProps) => {
                         className="w-56 rounded-2xl p-2"
                         align="start"
                       >
-                        {mockData.locations.map((loc) => (
-                          <DropdownMenuItem
-                            key={loc}
-                            onClick={() =>
-                              setSearchParams({ ...searchParams, to: loc })
-                            }
-                            className="cursor-pointer rounded-xl px-4 py-3 text-sm font-semibold"
-                          >
-                            {loc}
-                          </DropdownMenuItem>
-                        ))}
+                        {mockData.locations
+                          .filter((loc) => loc !== searchParams.from)
+                          .map((loc) => (
+                            <DropdownMenuItem
+                              key={loc}
+                              onClick={() =>
+                                setSearchParams({ ...searchParams, to: loc })
+                              }
+                              className="cursor-pointer rounded-xl px-4 py-3 text-sm font-semibold"
+                            >
+                              {loc}
+                            </DropdownMenuItem>
+                          ))}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   )}

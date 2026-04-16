@@ -6,14 +6,16 @@ import { useNavigate } from "@tanstack/react-router"
 import { generateBookingRef, saveBooking } from "@/lib/bookingStorage"
 import { format } from "date-fns"
 import usePaystack from "@/lib/paystack"
+import { useAuthStore } from "@/stores/auth-store"
 
 const CheckoutPage = () => {
   const { busId, seatNumbers, departureDate } = Route.useSearch()
   const navigate = useNavigate()
+  const { user } = useAuthStore()
 
   const [bookingDetails, setBookingDetails] = useState({
-    fullName: "",
-    email: "",
+    fullName: user?.name || "",
+    email: user?.email || "",
     phone: "",
     nextOfKinName: "",
     nextOfKinPhone: "",
