@@ -35,6 +35,7 @@ const CheckoutPage = () => {
       fullName: bookingDetails.fullName,
       email: bookingDetails.email,
       phone: bookingDetails.phone,
+      userId: user?.id,
       // nextOfKinName: bookingDetails.nextOfKinName,
       // nextOfKinPhone: bookingDetails.nextOfKinPhone,
       departureDate,

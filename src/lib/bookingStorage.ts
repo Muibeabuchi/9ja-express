@@ -9,6 +9,7 @@ export interface StoredBooking {
   seatNumbers: number[]
   fullName: string
   email: string
+  userId?: string
   phone: string
   departureDate: string // "yyyy-MM-dd"
   bookedAt: string // ISO timestamp
@@ -43,6 +44,12 @@ export function getAllBookings(): StoredBooking[] {
   } catch {
     return []
   }
+}
+
+/** Returns all bookings for a specific user by email */
+export function getBookingsByEmail(email: string): StoredBooking[] {
+  const all = getAllBookings()
+  return all.filter((b) => b.email.toLowerCase() === email.toLowerCase())
 }
 
 /** Persists a new booking record to localStorage */

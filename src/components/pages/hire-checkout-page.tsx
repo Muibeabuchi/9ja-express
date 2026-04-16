@@ -59,6 +59,7 @@ export const HireCheckoutPage = () => {
     const ref = generateHireBookingRef()
     saveHireBooking({
       bookingRef: ref,
+      userId: user?.id,
       selectedVehicles: parsedVehicles,
       totals: parsedTotals,
       totalDays: totalDays || 1,

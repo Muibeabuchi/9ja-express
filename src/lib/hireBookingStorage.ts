@@ -5,6 +5,7 @@ const STORAGE_KEY = "pmt_hire_bookings"
 
 export interface StoredHireBooking {
   bookingRef: string // e.g. "CHT-A1B2C3D4"
+  userId?: string
   selectedVehicles: Record<string, number>
   totals: {
     baseCost: number
@@ -54,6 +55,12 @@ export function getAllHireBookings(): StoredHireBooking[] {
   } catch {
     return []
   }
+}
+
+/** Returns all hire bookings for a specific user by email */
+export function getHireBookingsByEmail(email: string): StoredHireBooking[] {
+  const all = getAllHireBookings()
+  return all.filter((b) => b.email.toLowerCase() === email.toLowerCase())
 }
 
 /** Persists a new hire booking record to localStorage */
