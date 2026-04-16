@@ -1,23 +1,6 @@
-import Footer from "@/components/footer"
-import Navbar from "@/components/navbar"
-import {
-  createRootRoute,
-  //  Link,
-  Outlet,
-} from "@tanstack/react-router"
-import { Toaster } from "@/components/ui/sonner"
+import { createRootRoute } from "@tanstack/react-router"
+import { RootRoute } from "@/components/pages/root-route"
 
 export const Route = createRootRoute({
-  component: () => (
-    <>
-      <div className="flex min-h-screen max-w-full flex-col overflow-x-hidden bg-background">
-        <Navbar />
-        <main className="grow max-w-full overflow-x-hidden">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-      <Toaster />
-    </>
-  ),
+  component: RootRoute,
 })

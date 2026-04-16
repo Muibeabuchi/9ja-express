@@ -270,7 +270,7 @@ const SeatSelectionPage = () => {
           search: { busId, seatNumbers: selectedSeats, departureDate },
         })
       )
-      navigate({ to: "/sign-in" })
+      navigate({ to: "/auth/sign-in" })
       return
     }
     navigate({

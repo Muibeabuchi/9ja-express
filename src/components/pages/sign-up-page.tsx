@@ -1,10 +1,11 @@
 import { useForm } from "@tanstack/react-form"
 import { z } from "zod"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { ArrowRight, Eye, EyeOff, Bus } from "lucide-react"
+import { ArrowRight, Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
 import { useAuthStore } from "@/stores/auth-store"
 import { Button } from "@/components/ui/button"
+import { Logo } from "../logo"
 
 const signUpSchema = z
   .object({
@@ -57,12 +58,12 @@ export function SignUpPage() {
   })
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 pt-4">
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-            <Bus className="h-8 w-8 text-primary" />
-          </div>
+          <Link to="/">
+            <Logo />
+          </Link>
           <h1 className="mt-6 font-headline text-3xl font-bold tracking-tight">
             Create Account
           </h1>
@@ -209,7 +210,7 @@ export function SignUpPage() {
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link
-            to="/sign-in"
+            to="/auth/sign-in"
             className="font-medium text-primary hover:underline"
           >
             Sign in

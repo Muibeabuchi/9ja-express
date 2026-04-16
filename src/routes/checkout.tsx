@@ -22,7 +22,7 @@ export const Route = createFileRoute("/checkout")({
           search: currentSearch,
         })
       )
-      throw redirect({ to: "/sign-in" })
+      throw redirect({ to: "/auth/sign-in" })
     }
   },
 })

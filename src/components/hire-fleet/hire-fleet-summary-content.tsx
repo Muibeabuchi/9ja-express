@@ -61,7 +61,7 @@ export default function HireFleetSummaryContent({
           },
         })
       )
-      navigate({ to: "/sign-in" })
+      navigate({ to: "/auth/sign-in" })
       return
     }
     navigate({

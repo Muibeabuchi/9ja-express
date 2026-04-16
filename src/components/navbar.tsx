@@ -15,12 +15,12 @@ import {
 import { useAuthStore } from "@/stores/auth-store"
 import { useRouter } from "@tanstack/react-router"
 
-const navLinks = [
-  { label: "Trips", to: "/" },
-  { label: "Manage Booking", to: "/manage-booking" },
-  { label: "Offers", to: "/" },
-  { label: "Support", to: "/" },
-]
+// const navLinks = [
+//   // { label: "Trips", to: "/" },Q
+//   // { label: "Manage Booking", to: "/manage-booking" },
+//   // { label: "Offers", to: "/" },
+//   // { label: "Support", to: "/" },
+// ]
 
 const Navbar = () => {
   const { user, logout } = useAuthStore()
@@ -70,7 +70,8 @@ const Navbar = () => {
             </Link>
 
             <div className="hidden items-center gap-8 md:flex">
-              {navLinks.map((link) => (
+              {/* { */}
+              {/* navLinks.map((link) => (
                 <Link
                   key={link.label}
                   to={link.to}
@@ -79,7 +80,8 @@ const Navbar = () => {
                   <span>{link.label}</span>
                   <span className="absolute inset-x-0 -bottom-2 h-px origin-left scale-x-0 bg-white/80 transition-transform duration-300 group-hover:scale-x-100" />
                 </Link>
-              ))}
+              )) */}
+              {/* } */}
             </div>
 
             <div className="flex items-center gap-2 md:gap-3">
@@ -125,7 +127,7 @@ const Navbar = () => {
                 </DropdownMenu>
               ) : (
                 <Link
-                  to="/sign-in"
+                  to="/auth/sign-in"
                   className="hidden h-10 items-center gap-2 rounded-full border border-white/12 bg-white/7 px-4 text-sm font-semibold text-white/82 transition-all duration-300 hover:border-white/25 hover:bg-white/12 hover:text-white sm:flex"
                 >
                   <User size={16} />

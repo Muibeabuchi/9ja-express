@@ -10,6 +10,8 @@ import { routeTree } from "./routeTree.gen"
 
 import "./index.css"
 
+import NotFoundPage from "@/components/pages/not-found-page"
+
 // Create a new router instance
 const router = createRouter({
   routeTree,
@@ -17,6 +19,7 @@ const router = createRouter({
   defaultPreloadStaleTime: 0,
   scrollRestoration: true,
   defaultStructuralSharing: true,
+  defaultNotFoundComponent: NotFoundPage,
 })
 
 // Register the router instance for type safety
