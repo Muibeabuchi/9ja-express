@@ -1,5 +1,5 @@
 import CheckoutPage from "@/components/pages/checkout-page"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 import { z } from "zod"
 
 const checkoutSearchSchema = z.object({
@@ -11,4 +11,18 @@ const checkoutSearchSchema = z.object({
 export const Route = createFileRoute("/checkout")({
   validateSearch: checkoutSearchSchema,
   component: CheckoutPage,
+  beforeLoad: () => {
+    const session = sessionStorage.getItem("pmt_session")
+    if (!session) {
+      const currentSearch = window.location.search
+      sessionStorage.setItem(
+        "pmt_auth_redirect",
+        JSON.stringify({
+          to: "/checkout",
+          search: currentSearch,
+        })
+      )
+      throw redirect({ to: "/sign-in" })
+    }
+  },
 })

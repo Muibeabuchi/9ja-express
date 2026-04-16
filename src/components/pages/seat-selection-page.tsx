@@ -12,6 +12,7 @@ import { useState } from "react"
 import { data as mockData } from "@/data/mockData"
 import Seat from "../seat"
 import type { Bus } from "@/data/types"
+import { useAuthStore } from "@/stores/auth-store"
 
 const ExecutiveCoachGrid = ({
   // num,
@@ -227,6 +228,7 @@ const SeatSelectionPage = () => {
   const { busId, departureDate } = Route.useSearch()
   const navigate = useNavigate()
   const [selectedSeats, setSelectedSeats] = useState<number[]>([])
+  const { user } = useAuthStore()
 
   const bus = mockData.buses.find((b) => b.id === busId)
 
@@ -260,6 +262,17 @@ const SeatSelectionPage = () => {
   }
 
   const handleConfirm = () => {
+    if (!user) {
+      sessionStorage.setItem(
+        "pmt_auth_redirect",
+        JSON.stringify({
+          to: "/checkout",
+          search: { busId, seatNumbers: selectedSeats, departureDate },
+        })
+      )
+      navigate({ to: "/sign-in" })
+      return
+    }
     navigate({
       to: "/checkout",
       search: {

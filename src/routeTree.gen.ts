@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SeatsRouteImport } from './routes/seats'
 import { Route as SearchResultsRouteImport } from './routes/search-results'
 import { Route as ManageBookingRouteImport } from './routes/manage-booking'
@@ -19,6 +21,16 @@ import { Route as ConfirmationRouteImport } from './routes/confirmation'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SeatsRoute = SeatsRouteImport.update({
   id: '/seats',
   path: '/seats',
@@ -75,6 +87,8 @@ export interface FileRoutesByFullPath {
   '/manage-booking': typeof ManageBookingRoute
   '/search-results': typeof SearchResultsRoute
   '/seats': typeof SeatsRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +100,8 @@ export interface FileRoutesByTo {
   '/manage-booking': typeof ManageBookingRoute
   '/search-results': typeof SearchResultsRoute
   '/seats': typeof SeatsRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +114,8 @@ export interface FileRoutesById {
   '/manage-booking': typeof ManageBookingRoute
   '/search-results': typeof SearchResultsRoute
   '/seats': typeof SeatsRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +129,8 @@ export interface FileRouteTypes {
     | '/manage-booking'
     | '/search-results'
     | '/seats'
+    | '/sign-in'
+    | '/sign-up'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +142,8 @@ export interface FileRouteTypes {
     | '/manage-booking'
     | '/search-results'
     | '/seats'
+    | '/sign-in'
+    | '/sign-up'
   id:
     | '__root__'
     | '/'
@@ -133,6 +155,8 @@ export interface FileRouteTypes {
     | '/manage-booking'
     | '/search-results'
     | '/seats'
+    | '/sign-in'
+    | '/sign-up'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,10 +169,26 @@ export interface RootRouteChildren {
   ManageBookingRoute: typeof ManageBookingRoute
   SearchResultsRoute: typeof SearchResultsRoute
   SeatsRoute: typeof SeatsRoute
+  SignInRoute: typeof SignInRoute
+  SignUpRoute: typeof SignUpRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/seats': {
       id: '/seats'
       path: '/seats'
@@ -225,6 +265,8 @@ const rootRouteChildren: RootRouteChildren = {
   ManageBookingRoute: ManageBookingRoute,
   SearchResultsRoute: SearchResultsRoute,
   SeatsRoute: SeatsRoute,
+  SignInRoute: SignInRoute,
+  SignUpRoute: SignUpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

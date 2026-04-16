@@ -1,9 +1,19 @@
 import { Link } from "@tanstack/react-router"
-import { Bell, Menu, User } from "lucide-react"
+import { Bell, Menu, User, LogOut } from "lucide-react"
 import { motion } from "motion/react"
 
 import { cn } from "@/lib/utils"
 import { Logo } from "./logo"
+import { Avatar, AvatarFallback } from "./ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu"
+import { useAuthStore } from "@/stores/auth-store"
+import { useRouter } from "@tanstack/react-router"
 
 const navLinks = [
   { label: "Trips", to: "/" },
@@ -13,6 +23,20 @@ const navLinks = [
 ]
 
 const Navbar = () => {
+  const { user, logout } = useAuthStore()
+  const router = useRouter()
+  const userInitials = user?.name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2)
+
+  const handleLogout = () => {
+    const refresh = router.invalidate
+    logout({ refresh })
+  }
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
@@ -62,10 +86,52 @@ const Navbar = () => {
               <button className="flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/7 text-white/78 transition-all duration-300 hover:border-white/25 hover:bg-white/12 hover:text-white">
                 <Bell size={18} />
               </button>
-              <button className="hidden h-10 items-center gap-2 rounded-full border border-white/12 bg-white/7 px-4 text-sm font-semibold text-white/82 transition-all duration-300 hover:border-white/25 hover:bg-white/12 hover:text-white sm:flex">
-                <User size={16} />
-                Account
-              </button>
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/7 text-white/82 transition-all duration-300 hover:border-white/25 hover:bg-white/12 hover:text-white">
+                      <Avatar size="sm" className="border border-white/12">
+                        <AvatarFallback className="bg-white/7 text-xs font-bold text-white/82">
+                          {userInitials}
+                        </AvatarFallback>
+                      </Avatar>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <div className="flex items-center gap-2 p-3">
+                      <Avatar size="sm">
+                        <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
+                          {userInitials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold">
+                          {user.name}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {user.email}
+                        </span>
+                      </div>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Log Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link
+                  to="/sign-in"
+                  className="hidden h-10 items-center gap-2 rounded-full border border-white/12 bg-white/7 px-4 text-sm font-semibold text-white/82 transition-all duration-300 hover:border-white/25 hover:bg-white/12 hover:text-white sm:flex"
+                >
+                  <User size={16} />
+                  Account
+                </Link>
+              )}
               <button className="flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/7 text-white/82 transition-all duration-300 hover:border-white/25 hover:bg-white/12 hover:text-white md:hidden">
                 <Menu size={18} />
               </button>

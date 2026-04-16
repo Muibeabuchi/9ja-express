@@ -2,6 +2,7 @@ import { ArrowRight, Bus, Minus, Plus, ShieldCheck } from "lucide-react"
 import type { ReactNode } from "react"
 import { data as mockData } from "@/data/mockData"
 import { useNavigate, useSearch } from "@tanstack/react-router"
+import { useAuthStore } from "@/stores/auth-store"
 
 type Props = {
   title: ReactNode
@@ -41,8 +42,28 @@ export default function HireFleetSummaryContent({
 }: Props) {
   const navigate = useNavigate()
   const search = useSearch({ from: "/hire-fleet" })
+  const { user } = useAuthStore()
   const handleNavigate = () => {
-    console.log("navigate to checkout page")
+    if (!user) {
+      sessionStorage.setItem(
+        "pmt_auth_redirect",
+        JSON.stringify({
+          to: "/hire-checkout",
+          search: {
+            vehicles: JSON.stringify(selectedVehicles),
+            totals: JSON.stringify(totals),
+            totalDays,
+            origin,
+            destination,
+            originType: search.originType,
+            start: search.start,
+            end: search.end,
+          },
+        })
+      )
+      navigate({ to: "/sign-in" })
+      return
+    }
     navigate({
       to: "/hire-checkout",
       search: {
