@@ -35,7 +35,7 @@ export function ProcessFlow() {
     <SectionShell
       eyebrow="How it works"
       title="A frictionless flow from planning to departure."
-      description="The process section is intentionally minimal so it acts as a visual reset between richer destination and fleet content."
+      description="Booking your bus is simple. Find your route, choose your seat, and you're ready to go."
       centered
       className="py-10 md:py-16"
     >

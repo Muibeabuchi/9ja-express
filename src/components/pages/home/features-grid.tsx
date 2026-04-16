@@ -1,9 +1,4 @@
-import {
-  BadgeCheck,
-  MapPinned,
-  RefreshCcw,
-  Snowflake,
-} from "lucide-react"
+import { BadgeCheck, MapPinned, RefreshCcw, Snowflake } from "lucide-react"
 import { motion } from "motion/react"
 
 import {
@@ -53,8 +48,8 @@ export function FeaturesGrid() {
   return (
     <SectionShell
       eyebrow="Why travel with us"
-      title="Operational excellence, packaged as a premium travel experience."
-      description="The homepage now shifts from static marketing blocks to high-trust service signals, using the same cinematic language introduced in the hero."
+      title="Reliability you can count on, comfort you can feel."
+      description="From real-time tracking to professional drivers, every service is built to make your journey smooth and reliable."
       className="bg-transparent"
     >
       <motion.div
@@ -72,9 +67,11 @@ export function FeaturesGrid() {
               key={feature.title}
               variants={sectionFadeUp}
               transition={sectionTransition}
-              className={`group relative max-w-full overflow-hidden rounded-[2rem] border border-white/70 bg-white p-7 soft-elevation ${feature.size}`}
+              className={`group soft-elevation relative max-w-full overflow-hidden rounded-[2rem] border border-white/70 bg-white p-7 ${feature.size}`}
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${feature.accent} opacity-90 transition-opacity duration-500 group-hover:opacity-100`} />
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${feature.accent} opacity-90 transition-opacity duration-500 group-hover:opacity-100`}
+              />
               <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
               <div className="relative flex h-full flex-col justify-between gap-10">
                 <div className="flex items-start justify-between gap-4">

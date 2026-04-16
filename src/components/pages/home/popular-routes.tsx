@@ -37,8 +37,8 @@ export function PopularRoutes() {
   return (
     <SectionShell
       eyebrow="Destinations"
-      title="Curated corridors that keep Nigeria moving."
-      description="A destination gallery built around contrast, motion, and strong hierarchy so route discovery feels premium rather than utilitarian."
+      title="Popular routes across Nigeria."
+      description="Discover Nigeria's most traveled routes. Direct buses, reliable schedules, and comfortable coaches to get you there."
       className="bg-[linear-gradient(180deg,transparent_0%,rgba(255,255,255,0.84)_32%,transparent_100%)]"
     >
       <motion.div

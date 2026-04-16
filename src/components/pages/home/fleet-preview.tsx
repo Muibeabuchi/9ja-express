@@ -20,7 +20,10 @@ const specIcons = {
   wifi: Wifi,
 }
 
-const comfortSpecs: Record<string, { label: string; value: string; icon: keyof typeof specIcons }[]> = {
+const comfortSpecs: Record<
+  string,
+  { label: string; value: string; icon: keyof typeof specIcons }[]
+> = {
   "Toyota Sienna": [
     { label: "Legroom", value: "Executive lounge spacing", icon: "legroom" },
     { label: "AC", value: "Dual-zone climate comfort", icon: "ac" },
@@ -46,8 +49,8 @@ export function FleetPreview() {
   return (
     <SectionShell
       eyebrow="Our vehicles"
-      title="A fleet shaped around comfort, control, and confidence."
-      description="The fleet preview borrows the tone of the hire catalog while simplifying it into a marketing showcase with comfort-led storytelling."
+      title="A fleet you can trust."
+      description="Travel in comfort. Our fleet features modern coaches with AC, WiFi, and spacious seating for a premium journey."
       action={
         <Link
           to="/hire-fleet"
@@ -73,7 +76,7 @@ export function FleetPreview() {
               key={vehicle.id}
               variants={sectionFadeUp}
               transition={sectionTransition}
-              className="group flex max-w-full flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white soft-elevation"
+              className="group soft-elevation flex max-w-full flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white"
             >
               <div className="relative h-64 overflow-hidden bg-slate-100">
                 <img
@@ -83,7 +86,7 @@ export function FleetPreview() {
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,17,29,0)_0%,rgba(9,17,29,0.55)_100%)]" />
-                <div className="glass absolute left-4 top-4 rounded-full px-3 py-1.5 font-label text-[0.68rem] font-bold tracking-[0.18em] text-white uppercase">
+                <div className="glass absolute top-4 left-4 rounded-full px-3 py-1.5 font-label text-[0.68rem] font-bold tracking-[0.18em] text-white uppercase">
                   {vehicle.type}
                 </div>
                 <div className="absolute bottom-4 left-4 rounded-full bg-white/92 px-4 py-2 text-xs font-bold tracking-[0.18em] text-slate-900 uppercase">
