@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
-import { useForm } from "@tanstack/react-form"
+import { useState } from "react"
+import { useForm, useStore } from "@tanstack/react-form"
 import { z } from "zod"
 import { useNavigate } from "@tanstack/react-router"
 import { Route } from "@/routes/hire-checkout"
@@ -115,14 +115,16 @@ export const HireCheckoutPage = () => {
     // validatorAdapter: zodValidator(),
   })
 
-  useEffect(() => {
-    console.log(form.state.errors)
-  })
-  // console.log(form.)
+  const formValues = useStore(form.store, (state) => state.values.email)
+
+  const email = form.state.values.email
+
+  console.log("email", email)
+  console.log("formVaslues", formValues)
 
   const { initializePayment } = usePaystack({
     amount: parsedTotals.subtotal || 0,
-    email: form.getFieldValue("email"), // Will be set from form
+    email, // Will be set from form
     onSuccess: () => onSuccess(form.state.values), // Handled in form submit
     onError: () => setIsPaying(false),
   })
